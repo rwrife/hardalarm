@@ -122,6 +122,10 @@ struct PuzzleCatalogView: View {
                             StepsMissionView(targetSteps: 10) {
                                 activePracticePuzzle = nil
                             }
+                        case .dualSliders:
+                            DualSlidersPuzzleView {
+                                activePracticePuzzle = nil
+                            }
                         }
                     }
                     .frame(maxHeight: 380)

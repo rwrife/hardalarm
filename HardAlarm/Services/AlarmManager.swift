@@ -164,9 +164,23 @@ final class AlarmManager: ObservableObject {
         }
     }
     
+    // MARK: - Background Audio Lifecycle Management
+    
+    func handleDidEnterBackground() {
+        if alarms.contains(where: { $0.isEnabled }) {
+            SoundManager.shared.startSilentKeepAlive()
+        }
+    }
+    
+    func handleWillEnterForeground() {
+        if !isRinging {
+            SoundManager.shared.stopSilentKeepAlive()
+        }
+    }
+    
     // MARK: - Trigger Alarm
     
-    func triggerAlarm(_ alarm: Alarm) {
+    func triggerAlarm(_ alarm: Alarm, fromNotificationTap: Bool = false) {
         ringingAlarm = alarm
         isRinging = true
         currentPuzzleIndex = 1
@@ -180,7 +194,13 @@ final class AlarmManager: ObservableObject {
         isCelebrationPresented = false
         wakeStartTime = Date()
         
-        SoundManager.shared.playAlarm(sound: alarm.sound, volume: 1.0, progressive: false)
+        // Only post notification banner if not already responding to a tap
+        if !fromNotificationTap {
+            NotificationManager.shared.postAlarmFiredNotification(alarm: alarm)
+        }
+        
+        // Start playing loud siren (bypasses mute switch via .playback)
+        SoundManager.shared.playAlarm(sound: alarm.sound, volume: alarm.volume, progressive: alarm.isProgressiveVolume)
         Haptics.heavy()
     }
     

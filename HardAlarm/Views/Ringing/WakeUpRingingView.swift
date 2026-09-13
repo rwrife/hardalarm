@@ -295,6 +295,10 @@ struct WakeUpRingingView: View {
             StepsMissionView(targetSteps: 20) {
                 alarmManager.completeCurrentPuzzle()
             }
+        case .dualSliders:
+            DualSlidersPuzzleView {
+                alarmManager.completeCurrentPuzzle()
+            }
         }
     }
     

@@ -9,6 +9,7 @@ enum AlarmChallengeChoice: String, CaseIterable, Codable, Identifiable {
     case squats = "Morning Squats"
     case shakePhone = "Vigorous Shake"
     case steps = "Step Walkout"
+    case dualSliders = "Dual Sliders"
     
     var id: String { rawValue }
     
@@ -22,6 +23,7 @@ enum AlarmChallengeChoice: String, CaseIterable, Codable, Identifiable {
         case .squats: return "figure.cross.training"
         case .shakePhone: return "iphone.radiowaves.left.and.right"
         case .steps: return "shoeprints.fill"
+        case .dualSliders: return "slider.vertical.3"
         }
     }
     
@@ -35,6 +37,7 @@ enum AlarmChallengeChoice: String, CaseIterable, Codable, Identifiable {
         case .squats: return "Morning Squats"
         case .shakePhone: return "Vigorous Shake"
         case .steps: return "Step Walkout"
+        case .dualSliders: return "Dual Sliders"
         }
     }
     
@@ -48,6 +51,7 @@ enum AlarmChallengeChoice: String, CaseIterable, Codable, Identifiable {
         case .squats: return "10 squats detected with motion sensors"
         case .shakePhone: return "Physical kinetic shake challenge"
         case .steps: return "Walk 20 steps away from bed"
+        case .dualSliders: return "Slide knobs in matching random directions"
         }
     }
     
@@ -68,6 +72,8 @@ enum AlarmChallengeChoice: String, CaseIterable, Codable, Identifiable {
             return .shakePhone
         case .steps:
             return .steps
+        case .dualSliders:
+            return .dualSliders
         case .random:
             let calendar = Calendar.current
             let dayOfYear = calendar.ordinality(of: .day, in: .year, for: date) ?? calendar.component(.day, from: date)
@@ -80,7 +86,8 @@ enum AlarmChallengeChoice: String, CaseIterable, Codable, Identifiable {
                 .memorySequence,
                 .squats,
                 .shakePhone,
-                .steps
+                .steps,
+                .dualSliders
             ]
             let seed = (dayOfYear * 73856093) ^ (year * 19349663)
             let index = abs(seed) % available.count
@@ -104,6 +111,7 @@ enum ChallengeType: String, CaseIterable, Codable, Identifiable {
     case squats = "Morning Squats"
     case shakePhone = "Vigorous Shake"
     case steps = "Step Walkout"
+    case dualSliders = "Dual Sliders"
     case patternConnect = "Pattern Connect"
     
     var id: String { rawValue }
@@ -118,6 +126,7 @@ enum ChallengeType: String, CaseIterable, Codable, Identifiable {
         case .squats: return "figure.cross.training"
         case .shakePhone: return "iphone.radiowaves.left.and.right"
         case .steps: return "shoeprints.fill"
+        case .dualSliders: return "slider.vertical.3"
         case .patternConnect: return "point.topleft.down.to.point.bottomright.curvepath.fill"
         }
     }
@@ -131,6 +140,7 @@ enum ChallengeType: String, CaseIterable, Codable, Identifiable {
         case .squats: return "10 squats detected with motion sensors"
         case .shakePhone: return "Shake phone vigorously to fill energy"
         case .steps: return "Walk 20 steps away from bed"
+        case .dualSliders: return "Follow random direction instructions on dual sliders"
         case .patternConnect: return "Connect numbered points in ascending order"
         }
     }

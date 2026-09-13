@@ -7,6 +7,7 @@ final class SoundManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     
     private var audioPlayer: AVAudioPlayer?
     private var previewPlayer: AVAudioPlayer?
+    private var silentAudioPlayer: AVAudioPlayer?
     private var volumeTimer: Timer?
     private var isProgressive: Bool = false
     private var targetVolume: Float = 1.0
@@ -14,11 +15,13 @@ final class SoundManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     
     @Published var isPlaying: Bool = false
     @Published var isPreviewing: Bool = false
+    @Published var isSilentKeepAliveActive: Bool = false
     @Published var activePreviewSound: AlarmSound?
     
     override init() {
         super.init()
         configureAudioSession()
+        exportSoundsForNotificationsIfNeeded()
     }
     
     private func configureAudioSession() {
@@ -31,9 +34,44 @@ final class SoundManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
     }
     
+    // MARK: - Background Silent Audio Keep-Alive
+    
+    func startSilentKeepAlive() {
+        guard silentAudioPlayer == nil else { return }
+        
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
+            try session.setActive(true)
+            
+            // 5 seconds of inaudible PCM silence
+            let sampleRate = 44100
+            let silentSamples = [Int16](repeating: 0, count: sampleRate * 5)
+            let silentWavData = Self.createWavHeaderAndData(samples: silentSamples, sampleRate: sampleRate)
+            
+            silentAudioPlayer = try AVAudioPlayer(data: silentWavData)
+            silentAudioPlayer?.numberOfLoops = -1 // Loop indefinitely in background
+            silentAudioPlayer?.volume = 0.0 // Completely inaudible
+            silentAudioPlayer?.prepareToPlay()
+            silentAudioPlayer?.play()
+            isSilentKeepAliveActive = true
+            print("Background audio keep-alive started")
+        } catch {
+            print("Failed to start silent audio keep-alive: \(error)")
+        }
+    }
+    
+    func stopSilentKeepAlive() {
+        silentAudioPlayer?.stop()
+        silentAudioPlayer = nil
+        isSilentKeepAliveActive = false
+        print("Background audio keep-alive stopped")
+    }
+    
     // MARK: - Alarm Playback
     
     func playAlarm(sound: AlarmSound, volume: Float = 1.0, progressive: Bool = true) {
+        stopSilentKeepAlive()
         stopPreview()
         stopAlarm()
         
@@ -41,7 +79,7 @@ final class SoundManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         isProgressive = progressive
         currentRampedVolume = progressive ? 0.2 : targetVolume
         
-        let wavData = generateWavData(for: sound)
+        let wavData = Self.generateWavData(for: sound)
         
         do {
             configureAudioSession()
@@ -94,7 +132,7 @@ final class SoundManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
         
         stopPreview()
-        let wavData = generateWavData(for: sound)
+        let wavData = Self.generateWavData(for: sound)
         do {
             previewPlayer = try AVAudioPlayer(data: wavData)
             previewPlayer?.delegate = self
@@ -121,11 +159,33 @@ final class SoundManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
     }
     
+    // MARK: - Notification Sound Export
+    
+    func exportSoundsForNotificationsIfNeeded() {
+        Task.detached(priority: .utility) {
+            guard let libraryURL = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first else { return }
+            let soundsURL = libraryURL.appendingPathComponent("Sounds", isDirectory: true)
+            let fm = FileManager.default
+            
+            if !fm.fileExists(atPath: soundsURL.path) {
+                try? fm.createDirectory(at: soundsURL, withIntermediateDirectories: true)
+            }
+            
+            for sound in AlarmSound.allCases {
+                let fileURL = soundsURL.appendingPathComponent("\(sound.rawValue).wav")
+                if !fm.fileExists(atPath: fileURL.path) {
+                    // Generate 15-second loop for notification ringing
+                    let data = SoundManager.generateWavData(for: sound, duration: 15.0)
+                    try? data.write(to: fileURL, options: .atomic)
+                }
+            }
+        }
+    }
+    
     // MARK: - Synthetic Audio Tone Generator
     
-    private func generateWavData(for sound: AlarmSound) -> Data {
+    nonisolated static func generateWavData(for sound: AlarmSound, duration: Double = 1.6) -> Data {
         let sampleRate: Double = 44100.0
-        let duration: Double = 1.6 // Duration of one repeating loop cycle
         let totalSamples = Int(sampleRate * duration)
         
         var samples = [Int16](repeating: 0, count: totalSamples)
@@ -189,7 +249,7 @@ final class SoundManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         return createWavHeaderAndData(samples: samples, sampleRate: Int(sampleRate))
     }
     
-    private func createWavHeaderAndData(samples: [Int16], sampleRate: Int) -> Data {
+    nonisolated static func createWavHeaderAndData(samples: [Int16], sampleRate: Int) -> Data {
         var data = Data()
         let numChannels: Int16 = 1
         let bitsPerSample: Int16 = 16
