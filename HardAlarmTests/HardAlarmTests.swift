@@ -157,4 +157,25 @@ final class HardAlarmTests: XCTestCase {
         XCTAssertEqual(decoded.puzzlesRequired, 1)
         XCTAssertEqual(decoded.label, "Old Alarm")
     }
+    
+    func testBundleSupportedInterfaceOrientations() {
+        // Check UISupportedInterfaceOrientations in bundle info dictionary
+        let orientations = Bundle.main.object(forInfoDictionaryKey: "UISupportedInterfaceOrientations") as? [String]
+        XCTAssertNotNil(orientations, "App bundle must specify UISupportedInterfaceOrientations")
+        XCTAssertTrue(orientations?.contains("UIInterfaceOrientationPortrait") == true, "Must support portrait orientation")
+        
+        // Also verify the raw Info.plist file on disk contains iPad orientations for multitasking compliance
+        if let infoPlistURL = Bundle.main.url(forResource: "Info", withExtension: "plist"),
+           let data = try? Data(contentsOf: infoPlistURL),
+           let plist = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any] {
+            let ipadOrientations = plist["UISupportedInterfaceOrientations~ipad"] as? [String]
+            XCTAssertNotNil(ipadOrientations, "Raw Info.plist must specify UISupportedInterfaceOrientations~ipad")
+            XCTAssertTrue(ipadOrientations?.contains("UIInterfaceOrientationPortrait") == true)
+            XCTAssertTrue(ipadOrientations?.contains("UIInterfaceOrientationPortraitUpsideDown") == true)
+            XCTAssertTrue(ipadOrientations?.contains("UIInterfaceOrientationLandscapeLeft") == true)
+            XCTAssertTrue(ipadOrientations?.contains("UIInterfaceOrientationLandscapeRight") == true)
+        } else if let ipadOrientations = Bundle.main.infoDictionary?["UISupportedInterfaceOrientations~ipad"] as? [String] {
+            XCTAssertTrue(ipadOrientations.contains("UIInterfaceOrientationPortrait"))
+        }
+    }
 }
