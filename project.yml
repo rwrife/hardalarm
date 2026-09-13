@@ -1,0 +1,38 @@
+name: HardAlarm
+options:
+  bundleIdPrefix: com.hardalarm
+  deploymentTarget:
+    iOS: "26.0"
+targets:
+  HardAlarm:
+    type: application
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: HardAlarm
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.hardalarm.app
+      PRODUCT_NAME: HardAlarm
+      INFOPLIST_KEY_CFBundleDisplayName: HardAlarm
+      INFOPLIST_KEY_UILaunchScreen_Generation: YES
+      INFOPLIST_KEY_NSCameraUsageDescription: "HardAlarm requires camera access to detect household objects like coffee mugs to dismiss wake-up missions."
+      INFOPLIST_KEY_NSMicrophoneUsageDescription: "HardAlarm uses your microphone to verify morning affirmations."
+      INFOPLIST_KEY_NSSpeechRecognitionUsageDescription: "HardAlarm uses speech recognition to analyze spoken wake-up phrases."
+      INFOPLIST_KEY_NSMotionUsageDescription: "HardAlarm uses motion sensors to detect push-ups, squats, and shakes."
+      INFOPLIST_KEY_UIBackgroundModes:
+        - audio
+      GENERATE_INFOPLIST_FILE: YES
+      SWIFT_VERSION: "6.0"
+
+  HardAlarmTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: HardAlarmTests
+    dependencies:
+      - target: HardAlarm
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.hardalarm.tests
+      GENERATE_INFOPLIST_FILE: YES
+      SWIFT_VERSION: "6.0"
