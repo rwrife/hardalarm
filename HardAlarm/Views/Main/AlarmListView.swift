@@ -147,19 +147,11 @@ struct AlarmListView: View {
                 }
             )
         }
-        // Full Screen Ringing Alarm (reproducing Screen 2 & Screen 3)
-        .fullScreenCover(isPresented: $alarmManager.isRinging) {
-            WakeUpRingingView(alarmManager: alarmManager)
-        }
-        // Full Screen Celebration
-        .fullScreenCover(isPresented: $alarmManager.isCelebrationPresented) {
-            AlarmSuccessView(
-                record: alarmManager.lastCompletedRecord,
-                streakDays: alarmManager.stats.streakDays,
-                onDismiss: {
-                    alarmManager.dismissCelebration()
-                }
-            )
+        .onChange(of: alarmManager.isRinging) { _, isRinging in
+            if isRinging {
+                isAddingAlarm = false
+                editingAlarm = nil
+            }
         }
         .preferredColorScheme(.dark)
         .onAppear {
