@@ -73,9 +73,7 @@ struct WakeUpRingingView: View {
                                 RoundedRectangle(cornerRadius: 18)
                                     .fill(Color(red: 0.11, green: 0.12, blue: 0.19))
                                 
-                                MathMatchPuzzleView {
-                                    alarmManager.completeCurrentPuzzle()
-                                }
+                                puzzleView(for: alarmManager.currentPuzzleType)
                             }
                             .padding(.horizontal, 14)
                             .padding(.bottom, 14)
@@ -189,15 +187,7 @@ struct WakeUpRingingView: View {
                                     .stroke(Theme.cardBorder, lineWidth: 1)
                             )
                         
-                        if alarmManager.currentPuzzleType == .memorySequence || alarmManager.currentPuzzleType == .patternConnect {
-                            MemorySequence4x4View {
-                                alarmManager.completeCurrentPuzzle()
-                            }
-                        } else {
-                            ShakePhonePuzzleView {
-                                alarmManager.completeCurrentPuzzle()
-                            }
-                        }
+                        puzzleView(for: alarmManager.currentPuzzleType)
                     }
                     .padding(.horizontal, 24)
                     .frame(height: 380)
@@ -271,6 +261,26 @@ struct WakeUpRingingView: View {
         }
         .onReceive(timer) { input in
             currentTime = input
+        }
+    }
+    
+    // MARK: - Active Puzzle View Switcher
+    
+    @ViewBuilder
+    private func puzzleView(for type: PuzzleType) -> some View {
+        switch type {
+        case .mathMatch:
+            MathMatchPuzzleView {
+                alarmManager.completeCurrentPuzzle()
+            }
+        case .memorySequence, .patternConnect:
+            MemorySequence4x4View {
+                alarmManager.completeCurrentPuzzle()
+            }
+        case .shakePhone:
+            ShakePhonePuzzleView {
+                alarmManager.completeCurrentPuzzle()
+            }
         }
     }
     

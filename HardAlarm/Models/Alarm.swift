@@ -43,6 +43,7 @@ struct Alarm: Codable, Identifiable, Hashable {
     var isEnabled: Bool = true
     var repeatDays: Set<Int> = [] // 1=Sun, 2=Mon...
     var puzzlesRequired: Int = 3 // "Puzzles: 3"
+    var challengeMode: ChallengeSelectionMode = .random
     var mission: MissionConfig = MissionConfig()
     var sound: AlarmSound = .nuclear
     var volume: Float = 1.0
@@ -146,6 +147,7 @@ struct Alarm: Codable, Identifiable, Hashable {
                 isEnabled: true,
                 repeatDays: [2, 3, 4, 5, 6],
                 puzzlesRequired: 3,
+                challengeMode: .random,
                 soundDescriptionTitle: "Vibrate + Melody"
             ),
             Alarm(
@@ -154,6 +156,7 @@ struct Alarm: Codable, Identifiable, Hashable {
                 isEnabled: false,
                 repeatDays: [2, 4, 6],
                 puzzlesRequired: 2,
+                challengeMode: .random,
                 soundDescriptionTitle: "Vibrate + Melody"
             )
         ]

@@ -25,6 +25,7 @@ final class AlarmManager: ObservableObject {
     @Published var currentPuzzleIndex: Int = 1 // 1, 2, 3...
     @Published var totalPuzzlesRequired: Int = 3
     @Published var currentPuzzleType: PuzzleType = .mathMatch
+    @Published var activePuzzleSequence: [PuzzleType] = []
     @Published var isAlarmSoundActive: Bool = true
     @Published var isCelebrationPresented: Bool = false
     @Published var lastCompletedRecord: WakeRecord? = nil
@@ -160,7 +161,28 @@ final class AlarmManager: ObservableObject {
         isRinging = true
         currentPuzzleIndex = 1
         totalPuzzlesRequired = max(1, alarm.puzzlesRequired)
-        currentPuzzleType = .mathMatch
+        
+        // Build puzzle sequence based on challengeMode
+        var sequence: [PuzzleType] = []
+        let pool: [PuzzleType] = [.mathMatch, .memorySequence, .shakePhone]
+        
+        if alarm.challengeMode == .random {
+            var lastType: PuzzleType? = nil
+            for _ in 0..<totalPuzzlesRequired {
+                let candidates = pool.filter { $0 != lastType }
+                let chosen = candidates.randomElement() ?? pool.randomElement()!
+                sequence.append(chosen)
+                lastType = chosen
+            }
+        } else {
+            let fixed: [PuzzleType] = [.mathMatch, .memorySequence, .shakePhone]
+            for i in 0..<totalPuzzlesRequired {
+                sequence.append(fixed[i % fixed.count])
+            }
+        }
+        
+        activePuzzleSequence = sequence
+        currentPuzzleType = sequence.first ?? .mathMatch
         isAlarmSoundActive = true
         isCelebrationPresented = false
         wakeStartTime = Date()
@@ -188,13 +210,10 @@ final class AlarmManager: ObservableObject {
         
         if currentPuzzleIndex < totalPuzzlesRequired {
             currentPuzzleIndex += 1
-            switch currentPuzzleIndex {
-            case 2:
-                currentPuzzleType = .memorySequence
-            case 3:
-                currentPuzzleType = .shakePhone
-            default:
-                currentPuzzleType = .patternConnect
+            if currentPuzzleIndex - 1 < activePuzzleSequence.count {
+                currentPuzzleType = activePuzzleSequence[currentPuzzleIndex - 1]
+            } else {
+                currentPuzzleType = .mathMatch
             }
         } else {
             // All required puzzles conquered! Deactivate alarm!

@@ -1,5 +1,26 @@
 import SwiftUI
 
+enum ChallengeSelectionMode: String, CaseIterable, Codable, Identifiable {
+    case random = "Random"
+    case sequential = "Fixed"
+    
+    var id: String { rawValue }
+    
+    var icon: String {
+        switch self {
+        case .random: return "dice.fill"
+        case .sequential: return "list.number"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .random: return "Surprise mix of challenges every morning"
+        case .sequential: return "Math Match → Memory → Shake"
+        }
+    }
+}
+
 enum PuzzleType: String, CaseIterable, Codable, Identifiable {
     case mathMatch = "Math Match"
     case memorySequence = "Memory Sequence"

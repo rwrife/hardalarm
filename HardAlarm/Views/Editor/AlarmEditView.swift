@@ -77,18 +77,92 @@ struct AlarmEditView: View {
                         }
                         .padding(.horizontal)
                         
-                        // Puzzles Required Card
+                        // Puzzles Required & Challenge Mode Card
                         NeonCard(accentColor: Theme.primaryOrange) {
-                            HStack {
-                                Image(systemName: "puzzlepiece.fill")
-                                    .foregroundColor(Theme.primaryOrange)
-                                Text("Puzzles to Solve")
-                                    .font(.system(size: 16, weight: .bold, design: .rounded))
-                                    .foregroundColor(.white)
-                                Spacer()
-                                Stepper("\(alarm.puzzlesRequired)", value: $alarm.puzzlesRequired, in: 1...5)
-                                    .font(.system(size: 16, weight: .bold, design: .rounded))
-                                    .foregroundColor(Theme.primaryOrange)
+                            VStack(alignment: .leading, spacing: 14) {
+                                HStack {
+                                    Image(systemName: "puzzlepiece.fill")
+                                        .foregroundColor(Theme.primaryOrange)
+                                    Text("Puzzles to Solve")
+                                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                    Stepper("\(alarm.puzzlesRequired)", value: $alarm.puzzlesRequired, in: 1...5)
+                                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                                        .foregroundColor(Theme.primaryOrange)
+                                }
+                                
+                                Divider().background(Theme.cardBorder)
+                                
+                                VStack(alignment: .leading, spacing: 8) {
+                                    Text("CHALLENGE SELECTION")
+                                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                        .foregroundColor(Theme.textMuted)
+                                    
+                                    HStack(spacing: 10) {
+                                        Button(action: {
+                                            Haptics.light()
+                                            alarm.challengeMode = .random
+                                        }) {
+                                            HStack(spacing: 8) {
+                                                Image(systemName: "dice.fill")
+                                                    .foregroundColor(alarm.challengeMode == .random ? .black : Theme.primaryOrange)
+                                                
+                                                VStack(alignment: .leading, spacing: 2) {
+                                                    Text("Random Mix")
+                                                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                                                        .foregroundColor(alarm.challengeMode == .random ? .black : .white)
+                                                    Text("Shuffles every morning")
+                                                        .font(.system(size: 10, weight: .medium))
+                                                        .foregroundColor(alarm.challengeMode == .random ? .black.opacity(0.8) : Theme.textMuted)
+                                                }
+                                            }
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 10)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(alarm.challengeMode == .random ? Theme.primaryOrange : Theme.cardInner)
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 12)
+                                                            .stroke(alarm.challengeMode == .random ? Theme.primaryOrange : Theme.cardBorder, lineWidth: 1)
+                                                    )
+                                            )
+                                        }
+                                        .buttonStyle(.plain)
+                                        
+                                        Button(action: {
+                                            Haptics.light()
+                                            alarm.challengeMode = .sequential
+                                        }) {
+                                            HStack(spacing: 8) {
+                                                Image(systemName: "list.number")
+                                                    .foregroundColor(alarm.challengeMode == .sequential ? .black : Theme.primaryOrange)
+                                                
+                                                VStack(alignment: .leading, spacing: 2) {
+                                                    Text("Fixed Order")
+                                                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                                                        .foregroundColor(alarm.challengeMode == .sequential ? .black : .white)
+                                                    Text("Math → Memory → Shake")
+                                                        .font(.system(size: 10, weight: .medium))
+                                                        .foregroundColor(alarm.challengeMode == .sequential ? .black.opacity(0.8) : Theme.textMuted)
+                                                }
+                                            }
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 10)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(alarm.challengeMode == .sequential ? Theme.primaryOrange : Theme.cardInner)
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 12)
+                                                            .stroke(alarm.challengeMode == .sequential ? Theme.primaryOrange : Theme.cardBorder, lineWidth: 1)
+                                                    )
+                                            )
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
                             }
                         }
                         .padding(.horizontal)
