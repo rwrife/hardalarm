@@ -47,6 +47,7 @@
 		EAB62352A99150F15FEBDB63 /* MemoryMissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCB808F1CA39ED55536FD42 /* MemoryMissionView.swift */; };
 		F3127057761ED3094A9631A6 /* MemorySequence4x4View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9531E373607EC389E363F598 /* MemorySequence4x4View.swift */; };
 		F9D1128B444AA2A641332D24 /* NeonComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1E03E09A213D8429275DDE /* NeonComponents.swift */; };
+		AA1000000000000000000002 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA1000000000000000000001 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +103,7 @@
 		ECA666BD990EE81ABEF135A6 /* Alarm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alarm.swift; sourceTree = "<group>"; };
 		ED1E03E09A213D8429275DDE /* NeonComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonComponents.swift; sourceTree = "<group>"; };
 		ED59ED483274E7E521446EEB /* AlarmSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmSuccessView.swift; sourceTree = "<group>"; };
+		AA1000000000000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -239,6 +241,7 @@
 		D46789F827A4F51BC733B7C8 /* HardAlarm */ = {
 			isa = PBXGroup;
 			children = (
+				AA1000000000000000000001 /* Assets.xcassets */,
 				4366B2E0B3B5672964DDF252 /* HardAlarmApp.swift */,
 				76D0B6605CFB19B02BA0C323 /* Models */,
 				9562AD02BFC6D3C1BFF0C383 /* Services */,
@@ -281,6 +284,7 @@
 			buildConfigurationList = DF01E847A3BDF5677B84605B /* Build configuration list for PBXNativeTarget "HardAlarm" */;
 			buildPhases = (
 				B9F29AEA305CEFE54A50879C /* Sources */,
+				AA1000000000000000000003 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -341,6 +345,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA1000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA1000000000000000000002 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		849F0845B5B20F59CC7C5784 /* Sources */ = {
@@ -566,7 +581,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.hardalarm.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.infinityball.hardalarm;
 				PRODUCT_NAME = HardAlarm;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;
@@ -594,7 +609,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.hardalarm.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.infinityball.hardalarm;
 				PRODUCT_NAME = HardAlarm;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;

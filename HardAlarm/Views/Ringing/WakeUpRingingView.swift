@@ -46,7 +46,7 @@ struct WakeUpRingingView: View {
                 if alarmManager.currentPuzzleIndex == 1 {
                     // Screen 2: Golden Glowing Border & Sparkles Box
                     VStack(spacing: 12) {
-                        Text(alarmManager.totalPuzzlesRequired == 1 ? "Solve Puzzle to Stop Alarm" : "Solve \(alarmManager.totalPuzzlesRequired) Puzzles to Stop Alarm")
+                        Text(alarmManager.totalPuzzlesRequired == 1 ? "Complete Challenge to Stop Alarm" : "Complete \(alarmManager.totalPuzzlesRequired) Challenges to Stop Alarm")
                             .font(.system(size: 15, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                             .padding(.top, 16)
@@ -55,7 +55,7 @@ struct WakeUpRingingView: View {
                             RoundedRectangle(cornerRadius: 18)
                                 .fill(Color(red: 0.11, green: 0.12, blue: 0.19))
                             
-                            puzzleView(for: alarmManager.currentPuzzleType)
+                            puzzleView(for: alarmManager.currentChallengeType)
                                 .padding(.vertical, 8)
                         }
                         .padding(.horizontal, 14)
@@ -96,7 +96,7 @@ struct WakeUpRingingView: View {
                         .frame(height: 8)
                         .padding(.horizontal, 28)
                         
-                        Text(alarmManager.totalPuzzlesRequired == 1 ? "Solve 1 Puzzle to Dismiss Alarm" : "1 of \(alarmManager.totalPuzzlesRequired) Puzzles Solved")
+                        Text(alarmManager.totalPuzzlesRequired == 1 ? "Complete 1 Challenge to Dismiss Alarm" : "1 of \(alarmManager.totalPuzzlesRequired) Challenges Completed")
                             .font(.system(size: 13, weight: .semibold, design: .rounded))
                             .foregroundColor(Theme.textMuted)
                     }
@@ -262,10 +262,10 @@ struct WakeUpRingingView: View {
         }
     }
     
-    // MARK: - Active Puzzle View Switcher
+    // MARK: - Active Challenge View Switcher
     
     @ViewBuilder
-    private func puzzleView(for type: PuzzleType) -> some View {
+    private func puzzleView(for type: ChallengeType) -> some View {
         switch type {
         case .mathMatch:
             MathMatchPuzzleView {
@@ -277,6 +277,22 @@ struct WakeUpRingingView: View {
             }
         case .shakePhone:
             ShakePhonePuzzleView {
+                alarmManager.completeCurrentPuzzle()
+            }
+        case .pushups:
+            PushupsMissionView(targetReps: 10) {
+                alarmManager.completeCurrentPuzzle()
+            }
+        case .photoHunt:
+            PhotoHuntMissionView(target: .coffeeMug) {
+                alarmManager.completeCurrentPuzzle()
+            }
+        case .squats:
+            SquatsMissionView(targetReps: 10) {
+                alarmManager.completeCurrentPuzzle()
+            }
+        case .steps:
+            StepsMissionView(targetSteps: 20) {
                 alarmManager.completeCurrentPuzzle()
             }
         }

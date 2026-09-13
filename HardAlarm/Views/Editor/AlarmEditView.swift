@@ -21,7 +21,8 @@ struct AlarmEditView: View {
                 Theme.background.ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: 24) {
+                    ScrollViewReader { proxy in
+                        VStack(spacing: 24) {
                         // Time Picker Wheel
                         ZStack {
                             RoundedRectangle(cornerRadius: 24)
@@ -81,30 +82,30 @@ struct AlarmEditView: View {
                         NeonCard(accentColor: Theme.primaryOrange) {
                             VStack(alignment: .leading, spacing: 14) {
                                 HStack {
-                                    Image(systemName: "puzzlepiece.fill")
+                                    Image(systemName: "flame.fill")
                                         .foregroundColor(Theme.primaryOrange)
-                                    Text("Wake-Up Puzzle")
+                                    Text("Wake-Up Challenge")
                                         .font(.system(size: 16, weight: .bold, design: .rounded))
                                         .foregroundColor(.white)
                                     Spacer()
-                                    Text("Select 1 to Solve")
+                                    Text("Select 1 to Complete")
                                         .font(.system(size: 12, weight: .semibold))
                                         .foregroundColor(Theme.primaryOrange)
                                 }
                                 
-                                Text("Solve this puzzle to turn off the alarm in the morning")
+                                Text("Complete this challenge to turn off the alarm in the morning")
                                     .font(.system(size: 12, weight: .medium))
                                     .foregroundColor(Theme.textMuted)
                                 
                                 Divider().background(Theme.cardBorder)
                                 
-                                // 4 Selectable Puzzle Options
+                                // Selectable Challenge Options (Physical & Cognitive)
                                 VStack(spacing: 8) {
-                                    ForEach(AlarmPuzzleChoice.allCases) { choice in
-                                        let isSelected = alarm.selectedPuzzle == choice
+                                    ForEach(AlarmChallengeChoice.allCases) { choice in
+                                        let isSelected = alarm.selectedChallenge == choice
                                         Button(action: {
                                             Haptics.light()
-                                            alarm.selectedPuzzle = choice
+                                            alarm.selectedChallenge = choice
                                             alarm.puzzlesRequired = 1
                                         }) {
                                             HStack(spacing: 12) {
@@ -156,6 +157,7 @@ struct AlarmEditView: View {
                             }
                         }
                         .padding(.horizontal)
+                        .id("challenges_card")
                         
                         // Sound & Volume Picker
                         SoundPickerView(
@@ -199,7 +201,17 @@ struct AlarmEditView: View {
                         
                         Spacer().frame(height: 40)
                     }
+                    .onAppear {
+                        if CommandLine.arguments.contains("-testEditorScroll") {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                                withAnimation {
+                                    proxy.scrollTo("challenges_card", anchor: .top)
+                                }
+                            }
+                        }
+                    }
                 }
+            }
             }
             .navigationTitle(isNew ? "New Alarm" : "Edit Alarm")
             .navigationBarTitleDisplayMode(.inline)

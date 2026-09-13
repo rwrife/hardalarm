@@ -4,11 +4,13 @@ import Combine
 
 enum ActiveTab: String, CaseIterable, Identifiable {
     case alarms = "Alarms"
-    case puzzles = "Puzzles"
+    case challenges = "Challenges"
     case history = "History"
     case settings = "Settings"
     
     var id: String { rawValue }
+    
+    static var puzzles: ActiveTab { .challenges }
 }
 
 @MainActor
@@ -19,13 +21,21 @@ final class AlarmManager: ObservableObject {
     @Published var alarms: [Alarm] = []
     @Published var stats: UserWakeStats = UserWakeStats()
     
-    // Active Ringing & Puzzle Session State
+    // Active Ringing & Challenge Session State
     @Published var ringingAlarm: Alarm?
     @Published var isRinging: Bool = false
     @Published var currentPuzzleIndex: Int = 1 // 1, 2, 3...
-    @Published var totalPuzzlesRequired: Int = 3
-    @Published var currentPuzzleType: PuzzleType = .mathMatch
-    @Published var activePuzzleSequence: [PuzzleType] = []
+    @Published var totalPuzzlesRequired: Int = 1
+    @Published var currentChallengeType: ChallengeType = .mathMatch
+    var currentPuzzleType: ChallengeType {
+        get { currentChallengeType }
+        set { currentChallengeType = newValue }
+    }
+    @Published var activeChallengeSequence: [ChallengeType] = []
+    var activePuzzleSequence: [ChallengeType] {
+        get { activeChallengeSequence }
+        set { activeChallengeSequence = newValue }
+    }
     @Published var isAlarmSoundActive: Bool = true
     @Published var isCelebrationPresented: Bool = false
     @Published var lastCompletedRecord: WakeRecord? = nil
@@ -162,10 +172,10 @@ final class AlarmManager: ObservableObject {
         currentPuzzleIndex = 1
         totalPuzzlesRequired = 1
         
-        // Resolve selected puzzle (for .random, evaluates day-by-day deterministic choice)
-        let resolved = alarm.selectedPuzzle.resolvePuzzleType(for: Date())
-        activePuzzleSequence = [resolved]
-        currentPuzzleType = resolved
+        // Resolve selected challenge (for .random, evaluates day-by-day deterministic choice across all physical tasks and puzzles)
+        let resolved = alarm.selectedChallenge.resolveChallengeType(for: Date())
+        activeChallengeSequence = [resolved]
+        currentChallengeType = resolved
         isAlarmSoundActive = true
         isCelebrationPresented = false
         wakeStartTime = Date()

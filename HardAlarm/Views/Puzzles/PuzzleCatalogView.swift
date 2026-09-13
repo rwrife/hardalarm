@@ -7,37 +7,37 @@ struct PuzzleCatalogView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Wake-Up Puzzles")
+                    Text("Wake-Up Challenges")
                         .font(.system(size: 24, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
                     
-                    Text("Interactive challenges that unlock the morning alarm")
+                    Text("Physical and cognitive tasks that unlock the morning alarm")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(Theme.textMuted)
                 }
                 .padding(.top, 10)
                 
                 VStack(spacing: 14) {
-                    ForEach(PuzzleType.allCases) { puzzle in
+                    ForEach(ChallengeType.allCases.filter { $0 != .patternConnect }) { challenge in
                         Button(action: {
                             Haptics.medium()
-                            activePracticePuzzle = puzzle
+                            activePracticePuzzle = challenge
                         }) {
                             HStack(spacing: 16) {
                                 ZStack {
                                     Circle()
                                         .fill(Theme.primaryOrange.opacity(0.15))
                                         .frame(width: 48, height: 48)
-                                    Image(systemName: puzzle.icon)
+                                    Image(systemName: challenge.icon)
                                         .font(.system(size: 22))
                                         .foregroundColor(Theme.primaryOrange)
                                 }
                                 
                                 VStack(alignment: .leading, spacing: 3) {
-                                    Text(puzzle.title)
+                                    Text(challenge.title)
                                         .font(.system(size: 17, weight: .bold, design: .rounded))
                                         .foregroundColor(.white)
-                                    Text(puzzle.subtitle)
+                                    Text(challenge.subtitle)
                                         .font(.system(size: 13, weight: .medium))
                                         .foregroundColor(Theme.textMuted)
                                 }
@@ -45,7 +45,7 @@ struct PuzzleCatalogView: View {
                                 Spacer()
                                 
                                 HStack(spacing: 4) {
-                                    Text("Play")
+                                    Text("Try")
                                         .font(.system(size: 13, weight: .bold, design: .rounded))
                                         .foregroundColor(Theme.primaryOrange)
                                     Image(systemName: "chevron.right")
@@ -71,7 +71,7 @@ struct PuzzleCatalogView: View {
             }
             .padding(.horizontal, 20)
         }
-        .sheet(item: $activePracticePuzzle) { puzzle in
+        .sheet(item: $activePracticePuzzle) { challenge in
             ZStack {
                 Theme.background.ignoresSafeArea()
                 
@@ -93,12 +93,12 @@ struct PuzzleCatalogView: View {
                             .fill(Theme.cardBackground)
                             .overlay(RoundedRectangle(cornerRadius: 24).stroke(Theme.cardBorder, lineWidth: 1.5))
                         
-                        switch puzzle {
+                        switch challenge {
                         case .mathMatch:
                             MathMatchPuzzleView {
                                 activePracticePuzzle = nil
                             }
-                        case .memorySequence:
+                        case .memorySequence, .patternConnect:
                             MemorySequence4x4View {
                                 activePracticePuzzle = nil
                             }
@@ -106,8 +106,20 @@ struct PuzzleCatalogView: View {
                             ShakePhonePuzzleView {
                                 activePracticePuzzle = nil
                             }
-                        case .patternConnect:
-                            MemorySequence4x4View {
+                        case .pushups:
+                            PushupsMissionView(targetReps: 5) {
+                                activePracticePuzzle = nil
+                            }
+                        case .photoHunt:
+                            PhotoHuntMissionView(target: .coffeeMug) {
+                                activePracticePuzzle = nil
+                            }
+                        case .squats:
+                            SquatsMissionView(targetReps: 5) {
+                                activePracticePuzzle = nil
+                            }
+                        case .steps:
+                            StepsMissionView(targetSteps: 10) {
                                 activePracticePuzzle = nil
                             }
                         }

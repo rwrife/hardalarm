@@ -49,7 +49,7 @@ struct AlarmListView: View {
                 switch alarmManager.selectedTab {
                 case .alarms:
                     alarmsListContent
-                case .puzzles:
+                case .challenges:
                     PuzzleCatalogView()
                 case .history:
                     HistoryView(alarmManager: alarmManager)
@@ -115,7 +115,7 @@ struct AlarmListView: View {
             currentTime = input
         }
         .onAppear {
-            if CommandLine.arguments.contains("-testEditor") {
+            if CommandLine.arguments.contains("-testEditor") || CommandLine.arguments.contains("-testEditorScroll") {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     isAddingAlarm = true
                 }
@@ -126,7 +126,7 @@ struct AlarmListView: View {
                 alarm: Alarm(
                     time: Date().addingTimeInterval(3600),
                     label: "Work",
-                    selectedPuzzle: .random,
+                    selectedChallenge: .random,
                     puzzlesRequired: 1
                 ),
                 isNew: true,
@@ -164,9 +164,6 @@ struct AlarmListView: View {
         .preferredColorScheme(.dark)
         .onAppear {
             NotificationManager.shared.requestAuthorization()
-            if CommandLine.arguments.contains("-testEditor") {
-                editingAlarm = alarmManager.alarms.first
-            }
         }
     }
     

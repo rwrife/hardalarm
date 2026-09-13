@@ -85,9 +85,13 @@ final class HardAlarmTests: XCTestCase {
     }
     
     func testPuzzleChoiceDirectResolution() {
-        XCTAssertEqual(AlarmPuzzleChoice.mathMatch.resolvePuzzleType(), .mathMatch)
-        XCTAssertEqual(AlarmPuzzleChoice.memorySequence.resolvePuzzleType(), .memorySequence)
-        XCTAssertEqual(AlarmPuzzleChoice.shakePhone.resolvePuzzleType(), .shakePhone)
+        XCTAssertEqual(AlarmChallengeChoice.mathMatch.resolveChallengeType(), .mathMatch)
+        XCTAssertEqual(AlarmChallengeChoice.memorySequence.resolveChallengeType(), .memorySequence)
+        XCTAssertEqual(AlarmChallengeChoice.shakePhone.resolveChallengeType(), .shakePhone)
+        XCTAssertEqual(AlarmChallengeChoice.pushups.resolveChallengeType(), .pushups)
+        XCTAssertEqual(AlarmChallengeChoice.photoHunt.resolveChallengeType(), .photoHunt)
+        XCTAssertEqual(AlarmChallengeChoice.squats.resolveChallengeType(), .squats)
+        XCTAssertEqual(AlarmChallengeChoice.steps.resolveChallengeType(), .steps)
     }
     
     func testPuzzleChoiceRandomChangesDayByDay() {
@@ -107,34 +111,36 @@ final class HardAlarmTests: XCTestCase {
             return
         }
         
-        let puzzle1 = AlarmPuzzleChoice.random.resolvePuzzleType(for: day1)
-        let puzzle2 = AlarmPuzzleChoice.random.resolvePuzzleType(for: day2)
-        let puzzle3 = AlarmPuzzleChoice.random.resolvePuzzleType(for: day3)
-        let puzzle4 = AlarmPuzzleChoice.random.resolvePuzzleType(for: day4)
-        let puzzle5 = AlarmPuzzleChoice.random.resolvePuzzleType(for: day5)
+        let challenge1 = AlarmChallengeChoice.random.resolveChallengeType(for: day1)
+        let challenge2 = AlarmChallengeChoice.random.resolveChallengeType(for: day2)
+        let challenge3 = AlarmChallengeChoice.random.resolveChallengeType(for: day3)
+        let challenge4 = AlarmChallengeChoice.random.resolveChallengeType(for: day4)
+        let challenge5 = AlarmChallengeChoice.random.resolveChallengeType(for: day5)
         
-        // Ensure that the puzzle resolved is one of the valid playable types
-        let validPool: [PuzzleType] = [.mathMatch, .memorySequence, .shakePhone]
-        XCTAssertTrue(validPool.contains(puzzle1))
-        XCTAssertTrue(validPool.contains(puzzle2))
-        XCTAssertTrue(validPool.contains(puzzle3))
+        // Ensure that the challenge resolved is one of the valid pool containing both physical and cognitive challenges
+        let validPool: [ChallengeType] = [
+            .pushups, .photoHunt, .mathMatch, .memorySequence, .squats, .shakePhone, .steps
+        ]
+        XCTAssertTrue(validPool.contains(challenge1))
+        XCTAssertTrue(validPool.contains(challenge2))
+        XCTAssertTrue(validPool.contains(challenge3))
         
-        // Ensure day-by-day stability (same day returns same puzzle)
-        let puzzle1Again = AlarmPuzzleChoice.random.resolvePuzzleType(for: day1)
-        XCTAssertEqual(puzzle1, puzzle1Again, "The same calendar date should deterministically resolve to the same puzzle")
+        // Ensure day-by-day stability (same day returns same challenge)
+        let challenge1Again = AlarmChallengeChoice.random.resolveChallengeType(for: day1)
+        XCTAssertEqual(challenge1, challenge1Again, "The same calendar date should deterministically resolve to the same challenge")
         
-        // Across multiple sequential days, ensure there is variety (not just stuck on 1 puzzle)
-        let sequence = [puzzle1, puzzle2, puzzle3, puzzle4, puzzle5]
+        // Across multiple sequential days, ensure variety across physical and cognitive challenges
+        let sequence = [challenge1, challenge2, challenge3, challenge4, challenge5]
         let uniqueCount = Set(sequence).count
-        XCTAssertGreaterThan(uniqueCount, 1, "Random puzzle selection should vary across days")
+        XCTAssertGreaterThan(uniqueCount, 1, "Random challenge selection should vary across days")
     }
     
     func testAlarmSinglePuzzleDefaultAndDecoding() throws {
-        let alarm = Alarm(time: Date(), label: "Single Puzzle Test")
+        let alarm = Alarm(time: Date(), label: "Single Challenge Test")
         XCTAssertEqual(alarm.puzzlesRequired, 1)
-        XCTAssertEqual(alarm.selectedPuzzle, .random)
+        XCTAssertEqual(alarm.selectedChallenge, .random)
         
-        // Test decoding legacy JSON without selectedPuzzle
+        // Test decoding legacy JSON without selectedChallenge
         let legacyJSON = """
         {
             "id": "12345678-1234-1234-1234-1234567890AB",
@@ -147,7 +153,7 @@ final class HardAlarmTests: XCTestCase {
         
         let decoder = JSONDecoder()
         let decoded = try decoder.decode(Alarm.self, from: legacyJSON)
-        XCTAssertEqual(decoded.selectedPuzzle, .random)
+        XCTAssertEqual(decoded.selectedChallenge, .random)
         XCTAssertEqual(decoded.puzzlesRequired, 1)
         XCTAssertEqual(decoded.label, "Old Alarm")
     }

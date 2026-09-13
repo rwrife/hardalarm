@@ -42,8 +42,12 @@ struct Alarm: Codable, Identifiable, Hashable {
     var label: String // e.g. "Work", "Gym"
     var isEnabled: Bool = true
     var repeatDays: Set<Int> = [] // 1=Sun, 2=Mon...
-    var selectedPuzzle: AlarmPuzzleChoice = .random
-    var puzzlesRequired: Int = 1 // Only 1 puzzle to solve!
+    var selectedChallenge: AlarmChallengeChoice = .random
+    var selectedPuzzle: AlarmChallengeChoice {
+        get { selectedChallenge }
+        set { selectedChallenge = newValue }
+    }
+    var puzzlesRequired: Int = 1 // Only 1 challenge to solve!
     var mission: MissionConfig = MissionConfig()
     var sound: AlarmSound = .nuclear
     var volume: Float = 1.0
@@ -54,7 +58,7 @@ struct Alarm: Codable, Identifiable, Hashable {
     var soundDescriptionTitle: String = "Vibrate + Melody"
     
     enum CodingKeys: String, CodingKey {
-        case id, time, label, isEnabled, repeatDays, puzzlesRequired, selectedPuzzle
+        case id, time, label, isEnabled, repeatDays, puzzlesRequired, selectedPuzzle, selectedChallenge
         case mission, sound, volume, isProgressiveVolume, snoozeAllowed, snoozeMinutes, maxSnoozeCount, soundDescriptionTitle
     }
     
@@ -64,7 +68,8 @@ struct Alarm: Codable, Identifiable, Hashable {
         label: String = "",
         isEnabled: Bool = true,
         repeatDays: Set<Int> = [],
-        selectedPuzzle: AlarmPuzzleChoice = .random,
+        selectedChallenge: AlarmChallengeChoice = .random,
+        selectedPuzzle: AlarmChallengeChoice? = nil,
         puzzlesRequired: Int = 1,
         mission: MissionConfig = MissionConfig(),
         sound: AlarmSound = .nuclear,
@@ -80,7 +85,7 @@ struct Alarm: Codable, Identifiable, Hashable {
         self.label = label
         self.isEnabled = isEnabled
         self.repeatDays = repeatDays
-        self.selectedPuzzle = selectedPuzzle
+        self.selectedChallenge = selectedPuzzle ?? selectedChallenge
         self.puzzlesRequired = puzzlesRequired
         self.mission = mission
         self.sound = sound
@@ -92,6 +97,26 @@ struct Alarm: Codable, Identifiable, Hashable {
         self.soundDescriptionTitle = soundDescriptionTitle
     }
     
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(time, forKey: .time)
+        try container.encode(label, forKey: .label)
+        try container.encode(isEnabled, forKey: .isEnabled)
+        try container.encode(repeatDays, forKey: .repeatDays)
+        try container.encode(selectedChallenge, forKey: .selectedChallenge)
+        try container.encode(selectedChallenge, forKey: .selectedPuzzle)
+        try container.encode(puzzlesRequired, forKey: .puzzlesRequired)
+        try container.encode(mission, forKey: .mission)
+        try container.encode(sound, forKey: .sound)
+        try container.encode(volume, forKey: .volume)
+        try container.encode(isProgressiveVolume, forKey: .isProgressiveVolume)
+        try container.encode(snoozeAllowed, forKey: .snoozeAllowed)
+        try container.encode(snoozeMinutes, forKey: .snoozeMinutes)
+        try container.encode(maxSnoozeCount, forKey: .maxSnoozeCount)
+        try container.encode(soundDescriptionTitle, forKey: .soundDescriptionTitle)
+    }
+    
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
@@ -99,7 +124,9 @@ struct Alarm: Codable, Identifiable, Hashable {
         self.label = try container.decodeIfPresent(String.self, forKey: .label) ?? ""
         self.isEnabled = try container.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? true
         self.repeatDays = try container.decodeIfPresent(Set<Int>.self, forKey: .repeatDays) ?? []
-        self.selectedPuzzle = try container.decodeIfPresent(AlarmPuzzleChoice.self, forKey: .selectedPuzzle) ?? .random
+        self.selectedChallenge = try container.decodeIfPresent(AlarmChallengeChoice.self, forKey: .selectedChallenge)
+            ?? container.decodeIfPresent(AlarmChallengeChoice.self, forKey: .selectedPuzzle)
+            ?? .random
         self.puzzlesRequired = try container.decodeIfPresent(Int.self, forKey: .puzzlesRequired) ?? 1
         self.mission = try container.decodeIfPresent(MissionConfig.self, forKey: .mission) ?? MissionConfig()
         self.sound = try container.decodeIfPresent(AlarmSound.self, forKey: .sound) ?? .nuclear
@@ -204,7 +231,7 @@ struct Alarm: Codable, Identifiable, Hashable {
                 label: "Work",
                 isEnabled: true,
                 repeatDays: [2, 3, 4, 5, 6],
-                selectedPuzzle: .random,
+                selectedChallenge: .random,
                 puzzlesRequired: 1,
                 soundDescriptionTitle: "Vibrate + Melody"
             ),
@@ -213,7 +240,7 @@ struct Alarm: Codable, Identifiable, Hashable {
                 label: "Gym",
                 isEnabled: false,
                 repeatDays: [2, 4, 6],
-                selectedPuzzle: .random,
+                selectedChallenge: .random,
                 puzzlesRequired: 1,
                 soundDescriptionTitle: "Vibrate + Melody"
             )

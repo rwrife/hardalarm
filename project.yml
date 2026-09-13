@@ -1,6 +1,6 @@
 name: HardAlarm
 options:
-  bundleIdPrefix: com.hardalarm
+  bundleIdPrefix: com.infinityball
   deploymentTarget:
     iOS: "26.0"
 targets:
@@ -11,7 +11,7 @@ targets:
     sources:
       - path: HardAlarm
     settings:
-      PRODUCT_BUNDLE_IDENTIFIER: com.hardalarm.app
+      PRODUCT_BUNDLE_IDENTIFIER: com.infinityball.hardalarm
       PRODUCT_NAME: HardAlarm
       INFOPLIST_KEY_CFBundleDisplayName: HardAlarm
       INFOPLIST_KEY_UILaunchScreen_Generation: YES

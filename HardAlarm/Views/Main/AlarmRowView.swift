@@ -32,13 +32,14 @@ struct AlarmRowView: View {
                     .foregroundColor(alarm.isEnabled ? .white : .white.opacity(0.45))
                 
                 HStack(spacing: 6) {
-                    Image(systemName: alarm.selectedPuzzle.icon)
+                    Image(systemName: alarm.selectedChallenge.icon)
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Theme.primaryOrange.opacity(alarm.isEnabled ? 1.0 : 0.5))
                     
-                    Text("Puzzle: \(alarm.selectedPuzzle.displayName)")
-                        .font(.system(size: 13, weight: .medium))
+                    Text("Challenge: \(alarm.selectedChallenge.displayName)")
+                        .font(.system(size: 12.5, weight: .medium))
                         .lineLimit(1)
+                        .minimumScaleFactor(0.85)
                         .foregroundColor(Theme.textMuted.opacity(alarm.isEnabled ? 1.0 : 0.5))
                 }
             }
