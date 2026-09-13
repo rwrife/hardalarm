@@ -3,69 +3,60 @@ import SwiftUI
 struct AlarmRowView: View {
     let alarm: Alarm
     let onToggle: () -> Void
-    let onTest: () -> Void
+    let onEdit: () -> Void
     
     var body: some View {
-        NeonCard(accentColor: alarm.isEnabled ? alarm.mission.type.accentColor : Theme.cardBorder) {
-            VStack(alignment: .leading, spacing: 14) {
-                // Top row: Time + Toggle
-                HStack(alignment: .firstTextBaseline) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(alarm.timeFormatted)
-                            .font(.system(size: 38, weight: .black, design: .rounded))
-                            .foregroundColor(alarm.isEnabled ? .white : .white.opacity(0.4))
-                        
-                        if !alarm.label.isEmpty {
-                            Text(alarm.label)
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(alarm.isEnabled ? .white.opacity(0.85) : .white.opacity(0.3))
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    // Toggle
-                    Toggle("", isOn: Binding(
-                        get: { alarm.isEnabled },
-                        set: { _ in onToggle() }
-                    ))
-                    .labelsHidden()
-                    .tint(alarm.mission.type.accentColor)
-                }
-                
-                Divider()
-                    .background(Theme.cardBorder)
-                
-                // Bottom row: Repeat, Mission Badge, Test Button
-                HStack(spacing: 8) {
-                    // Repeat badge
-                    HStack(spacing: 4) {
-                        Image(systemName: "repeat")
-                            .font(.system(size: 11))
-                        Text(alarm.repeatDescription)
-                            .font(.system(size: 12, weight: .semibold))
-                    }
-                    .foregroundColor(.white.opacity(alarm.isEnabled ? 0.7 : 0.3))
-                    
-                    Spacer()
-                    
-                    // Mission badge
-                    MissionBadge(mission: alarm.mission)
-                        .opacity(alarm.isEnabled ? 1.0 : 0.4)
-                    
-                    // Instant Test Button
-                    Button(action: onTest) {
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 12))
-                            .foregroundColor(alarm.mission.type.accentColor)
-                            .padding(8)
-                            .background(
-                                Circle()
-                                    .fill(alarm.mission.type.accentColor.opacity(0.15))
-                            )
+        HStack(spacing: 16) {
+            // Left Status Circle (Filled glowing orange if enabled, dark inactive if disabled)
+            Button(action: onToggle) {
+                ZStack {
+                    if alarm.isEnabled {
+                        Circle()
+                            .fill(Theme.primaryOrange)
+                            .frame(width: 14, height: 14)
+                            .shadow(color: Theme.primaryOrange.opacity(0.6), radius: 6)
+                    } else {
+                        Circle()
+                            .fill(Color(red: 0.22, green: 0.24, blue: 0.35))
+                            .frame(width: 14, height: 14)
                     }
                 }
+                .frame(width: 24, height: 24)
             }
+            .buttonStyle(.plain)
+            
+            // Alarm Title & Puzzle count
+            VStack(alignment: .leading, spacing: 3) {
+                Text(alarm.cardTitle)
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(alarm.isEnabled ? .white : .white.opacity(0.45))
+                
+                Text("Puzzles: \(alarm.puzzlesRequired)")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(Theme.textMuted.opacity(alarm.isEnabled ? 1.0 : 0.5))
+            }
+            
+            Spacer()
+            
+            // Right Gear Icon (Edit Alarm)
+            Button(action: onEdit) {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(Theme.textMuted.opacity(0.85))
+                    .padding(8)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
         }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 18)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Theme.cardBackground)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Theme.cardBorder, lineWidth: 1)
+                )
+        )
     }
 }

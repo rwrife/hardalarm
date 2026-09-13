@@ -4,215 +4,154 @@ struct AlarmListView: View {
     @StateObject private var alarmManager = AlarmManager.shared
     @State private var editingAlarm: Alarm?
     @State private var isAddingAlarm: Bool = false
+    @State private var currentTime = Date()
+    let clockTimer = Timer.publish(every: 1.0, on: .main, in: .common).autoconnect()
+    
+    var timeFormatted: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "hh:mm"
+        return formatter.string(from: currentTime)
+    }
+    
+    var activeAlarmString: String {
+        if let active = alarmManager.activeAlarm {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "h:mm a"
+            return "Active Alarm: \(formatter.string(from: active.time))"
+        }
+        return "No Active Alarm"
+    }
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Theme.background.ignoresSafeArea()
+        ZStack {
+            Theme.background.ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                // Top Header Clock: "07:15", "Rise & Shine!"
+                VStack(spacing: 6) {
+                    Text(timeFormatted)
+                        .font(.system(size: 68, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .tracking(1)
+                    
+                    Text("Rise & Shine!")
+                        .font(.system(size: 19, weight: .medium, design: .rounded))
+                        .foregroundColor(Theme.textMuted)
+                }
+                .padding(.top, 18)
+                .padding(.bottom, 20)
                 
-                ScrollView {
-                    VStack(spacing: 18) {
-                        // Top Branding Header
-                        HStack(alignment: .center) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "flame.fill")
-                                        .foregroundColor(Theme.neonOrange)
-                                        .font(.system(size: 24))
-                                    Text("HardAlarm")
-                                        .font(.system(size: 32, weight: .black, design: .rounded))
-                                        .foregroundColor(.white)
-                                    
-                                    Text("iOS 26")
-                                        .font(.system(size: 11, weight: .bold, design: .monospaced))
-                                        .foregroundColor(Theme.neonOrange)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 3)
-                                        .background(Capsule().fill(Theme.neonOrange.opacity(0.18)))
-                                }
-                                Text("Wake-up challenges that break morning inertia")
-                                    .font(.system(size: 13, weight: .medium))
-                                    .foregroundColor(.white.opacity(0.5))
-                            }
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                Haptics.medium()
-                                isAddingAlarm = true
-                            }) {
-                                Image(systemName: "plus")
-                                    .font(.system(size: 18, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .frame(width: 44, height: 44)
-                                    .background(Circle().fill(Theme.neonOrange))
-                                    .shadow(color: Theme.neonOrange.opacity(0.4), radius: 8)
-                            }
+                // Horizontal Navigation Tab Bar with Underline & Pip Dot
+                TopTabBarView(selectedTab: $alarmManager.selectedTab)
+                    .padding(.bottom, 20)
+                
+                // Tab Content Switcher
+                switch alarmManager.selectedTab {
+                case .alarms:
+                    alarmsListContent
+                case .puzzles:
+                    PuzzleCatalogView()
+                case .history:
+                    HistoryView(alarmManager: alarmManager)
+                case .settings:
+                    SettingsView(alarmManager: alarmManager)
+                }
+            }
+            
+            // Bottom Right Floating Action Button (+)
+            if alarmManager.selectedTab == .alarms {
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            Haptics.medium()
+                            isAddingAlarm = true
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 22, weight: .bold))
+                                .foregroundColor(.black)
+                                .frame(width: 58, height: 58)
+                                .background(Circle().fill(Theme.primaryOrange))
+                                .shadow(color: Theme.primaryOrange.opacity(0.4), radius: 10, x: 0, y: 4)
                         }
-                        .padding(.top, 8)
-                        .padding(.bottom, 4)
-                        
-                        // Countdown Banner if test is triggered
-                        if let count = alarmManager.testCountdown {
-                            HStack(spacing: 10) {
-                                Image(systemName: "timer")
-                                    .font(.system(size: 18))
-                                    .foregroundColor(Theme.neonRed)
-                                Text("ALARM RINGING IN \(count) SECONDS...")
-                                    .font(.system(size: 14, weight: .black, design: .monospaced))
-                                    .foregroundColor(Theme.neonRed)
-                                Spacer()
-                                Button("Cancel") {
-                                    alarmManager.cancelTestCountdown()
-                                }
-                                .font(.system(size: 13, weight: .bold))
-                                .foregroundColor(.white)
-                            }
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .fill(Theme.neonRed.opacity(0.2))
-                                    .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.neonRed, lineWidth: 1.5))
-                            )
-                            .transition(.scale.combined(with: .opacity))
-                        }
-                        
-                        // Snooze Active Banner
-                        if let snoozeRemaining = alarmManager.snoozeRemainingSeconds {
-                            HStack(spacing: 10) {
-                                Image(systemName: "clock.arrow.circlepath")
-                                    .foregroundColor(Theme.neonYellow)
-                                Text("SNOOZED: Resumes in \(snoozeRemaining / 60)m \(snoozeRemaining % 60)s")
-                                    .font(.system(size: 13, weight: .bold, design: .monospaced))
-                                    .foregroundColor(Theme.neonYellow)
-                                Spacer()
-                            }
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .fill(Theme.neonYellow.opacity(0.15))
-                                    .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.neonYellow, lineWidth: 1))
-                            )
-                        }
-                        
-                        // Stats & Next Alarm Header
-                        StatsHeaderView(
-                            nextAlarmString: alarmManager.timeUntilNextAlarmString,
-                            stats: alarmManager.stats,
-                            onQuickTest: {
-                                alarmManager.testAlarmInThreeSeconds()
-                            }
-                        )
-                        
-                        // Section Header
-                        HStack {
-                            Text("ACTIVE ALARMS")
-                                .font(.system(size: 12, weight: .bold, design: .monospaced))
-                                .foregroundColor(.white.opacity(0.5))
-                            Spacer()
-                            Text("\(alarmManager.alarms.count) Configured")
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundColor(.white.opacity(0.4))
-                        }
-                        .padding(.top, 8)
-                        
-                        // Alarms List
-                        if alarmManager.alarms.isEmpty {
-                            emptyStateView
-                        } else {
-                            VStack(spacing: 14) {
-                                ForEach(alarmManager.alarms) { alarm in
-                                    AlarmRowView(
-                                        alarm: alarm,
-                                        onToggle: {
-                                            alarmManager.toggleAlarm(alarm)
-                                        },
-                                        onTest: {
-                                            alarmManager.testAlarmInThreeSeconds(alarm: alarm)
-                                        }
-                                    )
-                                    .onTapGesture {
-                                        editingAlarm = alarm
-                                    }
-                                    .contextMenu {
-                                        Button(role: .destructive) {
-                                            alarmManager.deleteAlarm(id: alarm.id)
-                                        } label: {
-                                            Label("Delete Alarm", systemImage: "trash")
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        
-                        Spacer().frame(height: 50)
+                        .padding(.trailing, 24)
+                        .padding(.bottom, 24)
                     }
-                    .padding(.horizontal)
+                }
+            }
+            
+            // Countdown Banner if test is triggered
+            if let count = alarmManager.testCountdown {
+                VStack {
+                    HStack(spacing: 10) {
+                        Image(systemName: "timer")
+                            .font(.system(size: 18))
+                            .foregroundColor(Theme.primaryOrange)
+                        Text("ALARM RINGING IN \(count)...")
+                            .font(.system(size: 14, weight: .black, design: .monospaced))
+                            .foregroundColor(.white)
+                        Spacer()
+                        Button("Cancel") {
+                            alarmManager.cancelTestCountdown()
+                        }
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(Theme.primaryOrange)
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(Theme.cardBackground)
+                            .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.primaryOrange, lineWidth: 1.5))
+                    )
+                    .padding(.horizontal, 20)
                     .padding(.top, 10)
+                    Spacer()
                 }
+                .transition(.move(edge: .top).combined(with: .opacity))
             }
-            .navigationBarHidden(true)
-            // Add Alarm Sheet
-            .sheet(isPresented: $isAddingAlarm) {
-                AlarmEditView(
-                    alarm: Alarm(
-                        time: Date().addingTimeInterval(3600),
-                        label: "Morning Mission",
-                        mission: MissionConfig(type: .pushups, pushupTargetReps: 10)
-                    ),
-                    isNew: true,
-                    onSave: { newAlarm in
-                        alarmManager.addAlarm(newAlarm)
-                    }
-                )
-            }
-            // Edit Alarm Sheet
-            .sheet(item: $editingAlarm) { alarm in
-                AlarmEditView(
-                    alarm: alarm,
-                    isNew: false,
-                    onSave: { updated in
-                        alarmManager.updateAlarm(updated)
-                    },
-                    onDelete: { id in
-                        alarmManager.deleteAlarm(id: id)
-                    }
-                )
-            }
-            // Full Screen Ringing Alert
-            .fullScreenCover(isPresented: $alarmManager.isRinging) {
-                if let alarm = alarmManager.ringingAlarm {
-                    if alarmManager.isMissionActive {
-                        MissionActiveView(
-                            mission: alarm.mission,
-                            onMissionComplete: {
-                                alarmManager.completeMission()
-                            },
-                            onCancel: nil
-                        )
-                    } else {
-                        AlarmRingingView(
-                            alarm: alarm,
-                            onStartMission: {
-                                alarmManager.startMission()
-                            },
-                            onSnooze: {
-                                alarmManager.snoozeAlarm()
-                            }
-                        )
-                    }
+        }
+        .onReceive(clockTimer) { input in
+            currentTime = input
+        }
+        .sheet(isPresented: $isAddingAlarm) {
+            AlarmEditView(
+                alarm: Alarm(
+                    time: Date().addingTimeInterval(3600),
+                    label: "Work",
+                    puzzlesRequired: 3
+                ),
+                isNew: true,
+                onSave: { newAlarm in
+                    alarmManager.addAlarm(newAlarm)
                 }
-            }
-            // Full Screen Celebration
-            .fullScreenCover(isPresented: $alarmManager.isCelebrationPresented) {
-                AlarmSuccessView(
-                    record: alarmManager.lastCompletedRecord,
-                    streakDays: alarmManager.stats.streakDays,
-                    onDismiss: {
-                        alarmManager.dismissCelebration()
-                    }
-                )
-            }
+            )
+        }
+        .sheet(item: $editingAlarm) { alarm in
+            AlarmEditView(
+                alarm: alarm,
+                isNew: false,
+                onSave: { updated in
+                    alarmManager.updateAlarm(updated)
+                },
+                onDelete: { id in
+                    alarmManager.deleteAlarm(id: id)
+                }
+            )
+        }
+        // Full Screen Ringing Alarm (reproducing Screen 2 & Screen 3)
+        .fullScreenCover(isPresented: $alarmManager.isRinging) {
+            WakeUpRingingView(alarmManager: alarmManager)
+        }
+        // Full Screen Celebration
+        .fullScreenCover(isPresented: $alarmManager.isCelebrationPresented) {
+            AlarmSuccessView(
+                record: alarmManager.lastCompletedRecord,
+                streakDays: alarmManager.stats.streakDays,
+                onDismiss: {
+                    alarmManager.dismissCelebration()
+                }
+            )
         }
         .preferredColorScheme(.dark)
         .onAppear {
@@ -223,40 +162,65 @@ struct AlarmListView: View {
         }
     }
     
-    private var emptyStateView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "alarm.waves.left.and.right.fill")
-                .font(.system(size: 48))
-                .foregroundColor(.white.opacity(0.3))
-                .padding(.top, 40)
-            
-            Text("No Alarms Scheduled")
-                .font(.system(size: 18, weight: .bold))
-                .foregroundColor(.white)
-            
-            Text("Tap the + button to create your first wake-up challenge alarm.")
-                .font(.system(size: 14))
-                .foregroundColor(.white.opacity(0.6))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-            
-            Button(action: {
-                isAddingAlarm = true
-            }) {
-                HStack {
-                    Image(systemName: "plus")
-                    Text("Add Alarm")
+    // MARK: - Alarms List Content (Screen 1)
+    
+    private var alarmsListContent: some View {
+        ScrollView {
+            VStack(spacing: 14) {
+                // Alarms List Cards
+                ForEach(alarmManager.alarms) { alarm in
+                    AlarmRowView(
+                        alarm: alarm,
+                        onToggle: {
+                            alarmManager.toggleAlarm(alarm)
+                        },
+                        onEdit: {
+                            editingAlarm = alarm
+                        }
+                    )
                 }
-                .font(.system(size: 15, weight: .bold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
+                
+                // Quick Test Pill
+                Button(action: {
+                    alarmManager.testAlarmInThreeSeconds()
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "bolt.fill")
+                            .font(.system(size: 13))
+                        Text("Test Ringing Alarm (3s)")
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                    }
+                    .foregroundColor(Theme.primaryOrange)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(Theme.primaryOrange.opacity(0.12))
+                            .overlay(Capsule().stroke(Theme.primaryOrange.opacity(0.3), lineWidth: 1))
+                    )
+                }
+                .padding(.top, 4)
+                
+                Spacer().frame(height: 30)
+                
+                // Bottom Active Alarm Banner (from Screen 1)
+                HStack {
+                    Text(activeAlarmString)
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 52)
                 .background(
-                    Capsule()
-                        .fill(Theme.neonOrange)
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(Theme.cardBackground)
+                        .overlay(RoundedRectangle(cornerRadius: 14).stroke(Theme.cardBorder, lineWidth: 1))
                 )
+                .padding(.top, 10)
+                
+                Spacer().frame(height: 90)
             }
-            .padding(.top, 8)
+            .padding(.horizontal, 20)
         }
     }
 }

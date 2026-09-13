@@ -2,32 +2,42 @@ import Foundation
 import SwiftUI
 import Combine
 
+enum ActiveTab: String, CaseIterable, Identifiable {
+    case alarms = "Alarms"
+    case puzzles = "Puzzles"
+    case history = "History"
+    case settings = "Settings"
+    
+    var id: String { rawValue }
+}
+
 @MainActor
 final class AlarmManager: ObservableObject {
     static let shared = AlarmManager()
     
+    @Published var selectedTab: ActiveTab = .alarms
     @Published var alarms: [Alarm] = []
     @Published var stats: UserWakeStats = UserWakeStats()
     
-    // Active Ringing State
+    // Active Ringing & Puzzle Session State
     @Published var ringingAlarm: Alarm?
     @Published var isRinging: Bool = false
-    @Published var isMissionActive: Bool = false
+    @Published var currentPuzzleIndex: Int = 1 // 1, 2, 3...
+    @Published var totalPuzzlesRequired: Int = 3
+    @Published var currentPuzzleType: PuzzleType = .mathMatch
+    @Published var isAlarmSoundActive: Bool = true
     @Published var isCelebrationPresented: Bool = false
-    @Published var testCountdown: Int? = nil
-    
-    // Timing & Stats
-    @Published var wakeStartTime: Date? = nil
     @Published var lastCompletedRecord: WakeRecord? = nil
-    @Published var currentSnoozesUsed: Int = 0
-    @Published var snoozeRemainingSeconds: Int? = nil
+    
+    // Testing & Timers
+    @Published var testCountdown: Int? = nil
+    @Published var wakeStartTime: Date? = nil
     
     private var clockTimer: Timer?
-    private var snoozeTimer: Timer?
     private var testTimer: Timer?
     
-    private let alarmsKey = "HardAlarm_Alarms_Storage_v1"
-    private let statsKey = "HardAlarm_Stats_Storage_v1"
+    private let alarmsKey = "HardAlarm_Alarms_Storage_v2"
+    private let statsKey = "HardAlarm_Stats_Storage_v2"
     
     init() {
         loadData()
@@ -66,7 +76,7 @@ final class AlarmManager: ObservableObject {
         }
     }
     
-    // MARK: - Alarm Operations
+    // MARK: - Alarms CRUD
     
     func addAlarm(_ alarm: Alarm) {
         alarms.append(alarm)
@@ -77,8 +87,8 @@ final class AlarmManager: ObservableObject {
     }
     
     func updateAlarm(_ alarm: Alarm) {
-        if let index = alarms.firstIndex(where: { $0.id == alarm.id }) {
-            alarms[index] = alarm
+        if let idx = alarms.firstIndex(where: { $0.id == alarm.id }) {
+            alarms[idx] = alarm
             alarms.sort { $0.time < $1.time }
             saveAlarms()
             NotificationManager.shared.scheduleAlarmNotification(alarm: alarm)
@@ -94,11 +104,11 @@ final class AlarmManager: ObservableObject {
     }
     
     func toggleAlarm(_ alarm: Alarm) {
-        if let index = alarms.firstIndex(where: { $0.id == alarm.id }) {
-            alarms[index].isEnabled.toggle()
+        if let idx = alarms.firstIndex(where: { $0.id == alarm.id }) {
+            alarms[idx].isEnabled.toggle()
             saveAlarms()
-            if alarms[index].isEnabled {
-                NotificationManager.shared.scheduleAlarmNotification(alarm: alarms[index])
+            if alarms[idx].isEnabled {
+                NotificationManager.shared.scheduleAlarmNotification(alarm: alarms[idx])
             } else {
                 NotificationManager.shared.cancelNotification(for: alarm.id)
             }
@@ -106,31 +116,8 @@ final class AlarmManager: ObservableObject {
         }
     }
     
-    // MARK: - Next Upcoming Alarm
-    
-    var nextAlarm: Alarm? {
-        let enabledAlarms = alarms.filter { $0.isEnabled }
-        guard !enabledAlarms.isEmpty else { return nil }
-        
-        let now = Date()
-        return enabledAlarms.min {
-            $0.nextTriggerDate(from: now) < $1.nextTriggerDate(from: now)
-        }
-    }
-    
-    var timeUntilNextAlarmString: String {
-        guard let next = nextAlarm else { return "No active alarms" }
-        let interval = next.nextTriggerDate().timeIntervalSince(Date())
-        guard interval > 0 else { return "Ringing soon" }
-        
-        let hours = Int(interval) / 3600
-        let minutes = (Int(interval) % 3600) / 60
-        
-        if hours > 0 {
-            return "Alarm in \(hours)h \(minutes)m"
-        } else {
-            return "Alarm in \(minutes) minutes"
-        }
+    var activeAlarm: Alarm? {
+        alarms.first(where: { $0.isEnabled })
     }
     
     // MARK: - Clock Monitor
@@ -145,7 +132,7 @@ final class AlarmManager: ObservableObject {
     }
     
     private func checkAlarmTriggers() {
-        guard !isRinging, snoozeRemainingSeconds == nil else { return }
+        guard !isRinging else { return }
         let now = Date()
         let cal = Calendar.current
         let currentHour = cal.component(.hour, from: now)
@@ -153,7 +140,6 @@ final class AlarmManager: ObservableObject {
         let currentSec = cal.component(.second, from: now)
         let currentWeekday = cal.component(.weekday, from: now)
         
-        // Trigger right at the 00 second mark
         guard currentSec == 0 else { return }
         
         for alarm in alarms where alarm.isEnabled {
@@ -167,58 +153,78 @@ final class AlarmManager: ObservableObject {
         }
     }
     
-    // MARK: - Ringing & Missions
+    // MARK: - Trigger Alarm
     
     func triggerAlarm(_ alarm: Alarm) {
         ringingAlarm = alarm
         isRinging = true
-        isMissionActive = false
+        currentPuzzleIndex = 1
+        totalPuzzlesRequired = max(1, alarm.puzzlesRequired)
+        currentPuzzleType = .mathMatch
+        isAlarmSoundActive = true
         isCelebrationPresented = false
         wakeStartTime = Date()
-        currentSnoozesUsed = 0
-        snoozeRemainingSeconds = nil
         
-        SoundManager.shared.playAlarm(
-            sound: alarm.sound,
-            volume: alarm.volume,
-            progressive: alarm.isProgressiveVolume
-        )
+        SoundManager.shared.playAlarm(sound: alarm.sound, volume: 1.0, progressive: false)
         Haptics.heavy()
     }
     
-    func startMission() {
-        guard isRinging else { return }
-        isMissionActive = true
-        // Lower sound slightly during mission so user can hear cues/instructions
-        // but still maintains urgency!
-        Haptics.medium()
+    func toggleAlarmSound() {
+        isAlarmSoundActive.toggle()
+        if isAlarmSoundActive {
+            if let alarm = ringingAlarm {
+                SoundManager.shared.playAlarm(sound: alarm.sound, volume: 1.0, progressive: false)
+            }
+        } else {
+            SoundManager.shared.stopAlarm()
+        }
+        Haptics.light()
     }
     
-    func completeMission() {
+    // MARK: - Puzzle Progression
+    
+    func completeCurrentPuzzle() {
+        Haptics.success()
+        
+        if currentPuzzleIndex < totalPuzzlesRequired {
+            currentPuzzleIndex += 1
+            switch currentPuzzleIndex {
+            case 2:
+                currentPuzzleType = .memorySequence
+            case 3:
+                currentPuzzleType = .shakePhone
+            default:
+                currentPuzzleType = .patternConnect
+            }
+        } else {
+            // All required puzzles conquered! Deactivate alarm!
+            finishAlarmChallenge()
+        }
+    }
+    
+    private func finishAlarmChallenge() {
         guard let alarm = ringingAlarm else { return }
+        
+        SoundManager.shared.stopAlarm()
         
         let duration: Int
         if let start = wakeStartTime {
             duration = max(1, Int(Date().timeIntervalSince(start)))
         } else {
-            duration = 30
+            duration = 35
         }
         
-        SoundManager.shared.stopAlarm()
-        
         stats.recordDismissal(
-            alarmLabel: alarm.label.isEmpty ? "Morning Alarm" : alarm.label,
+            alarmLabel: alarm.label.isEmpty ? "Wake Up" : alarm.label,
             mission: alarm.mission,
             durationSeconds: duration,
-            snoozes: currentSnoozesUsed
+            snoozes: 0
         )
         saveStats()
         
         lastCompletedRecord = stats.records.first
-        isMissionActive = false
         isRinging = false
         isCelebrationPresented = true
-        
         Haptics.success()
     }
     
@@ -228,40 +234,7 @@ final class AlarmManager: ObservableObject {
         wakeStartTime = nil
     }
     
-    // MARK: - Snooze Logic
-    
-    func snoozeAlarm() {
-        guard let alarm = ringingAlarm, alarm.snoozeAllowed else { return }
-        guard currentSnoozesUsed < alarm.maxSnoozeCount else { return }
-        
-        currentSnoozesUsed += 1
-        isRinging = false
-        isMissionActive = false
-        SoundManager.shared.stopAlarm()
-        
-        let totalSeconds = alarm.snoozeMinutes * 60
-        snoozeRemainingSeconds = totalSeconds
-        
-        snoozeTimer?.invalidate()
-        snoozeTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            Task { @MainActor in
-                guard let self = self else { return }
-                if let remaining = self.snoozeRemainingSeconds, remaining > 1 {
-                    self.snoozeRemainingSeconds = remaining - 1
-                } else {
-                    self.snoozeTimer?.invalidate()
-                    self.snoozeTimer = nil
-                    self.snoozeRemainingSeconds = nil
-                    if let alarm = self.ringingAlarm {
-                        self.triggerAlarm(alarm)
-                    }
-                }
-            }
-        }
-        Haptics.warning()
-    }
-    
-    // MARK: - Testing / Simulator Utility
+    // MARK: - Test Trigger
     
     func testAlarmInThreeSeconds(alarm: Alarm? = nil) {
         let target = alarm ?? alarms.first ?? Alarm.sampleAlarms[0]

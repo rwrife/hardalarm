@@ -9,34 +9,43 @@
 /* Begin PBXBuildFile section */
 		06B943CE8712DE5AC7D33F24 /* ShakeMissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FD9ECA2898EACE77FE8D6B /* ShakeMissionView.swift */; };
 		0DA8D78371CF0E06BB2D1A8F /* Alarm.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA666BD990EE81ABEF135A6 /* Alarm.swift */; };
+		14401DADAA63DA67293A1D90 /* MathMatchPuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9492E65DF1BCAF79A93A2603 /* MathMatchPuzzleView.swift */; };
 		1748EE43E48DD329ABF04511 /* HardAlarmTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A87371D433993FC8B8D9200 /* HardAlarmTests.swift */; };
 		17599EB7BF43DABD52945802 /* AlarmListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C43F67DD40B202FFE2742A /* AlarmListView.swift */; };
 		20689385FCEDA0626B0AC6AA /* PushupsMissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB1E17CBA2B13A56E6A7F86 /* PushupsMissionView.swift */; };
+		25A8663DA285CB66DF0B29F7 /* WakeUpRingingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A096A396B96CF58E09B34 /* WakeUpRingingView.swift */; };
 		2E05CE27BCD66FE09F572E8F /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 644E7F7A6E6F1C15E8D4B205 /* Theme.swift */; };
 		38E275612BB473958DF7C9B5 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EAF7BB34509A43AEECA752F /* NotificationManager.swift */; };
 		38F0F2F43A39C8E3BDB3E310 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45D40B439BDD02B7FA9736A /* SoundManager.swift */; };
 		3A5F2403593F4A3CFE24873C /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2FFE2BA9031AFD432CB7E09 /* SpeechManager.swift */; };
 		40B10098C2BEF4CC9E553AE0 /* AlarmSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED59ED483274E7E521446EEB /* AlarmSuccessView.swift */; };
+		40C89D9CC66CE498BDAC5108 /* Puzzle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988629654248AD587BAE6443 /* Puzzle.swift */; };
 		44EBDA94E1C519E999664605 /* MissionActiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22D2E074AF3AC227426FBC0 /* MissionActiveView.swift */; };
 		45F477B6FA67CD181D971DF9 /* AlarmRingingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1E8A9ABA8935C26309A128 /* AlarmRingingView.swift */; };
 		4ACE1DA62CD65B5D5D3D4721 /* StatsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E9126B76CA3E4B38DB5EF2 /* StatsHeaderView.swift */; };
 		51DFDBA5180BCE0CF4F28F7F /* AlarmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F9D9431B453D62B77333B1 /* AlarmManager.swift */; };
 		520B362CC25F489B3805EDAE /* PhotoHuntMissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C66CE2D6B0F47C1FC529AD /* PhotoHuntMissionView.swift */; };
 		555CEF7889835211143A4FF1 /* MathMissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A31C89E4DCE6881BADCBA23 /* MathMissionView.swift */; };
+		5F18CFD6A8813E64129067CC /* ShakePhonePuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38FA4E5D61BE1591EC235BED /* ShakePhonePuzzleView.swift */; };
 		609F6BB99E55AA29DBCBD319 /* AlarmRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D670335D0DE01D46C91A44 /* AlarmRowView.swift */; };
 		74A4DC1DBEE3B25D8AA4040C /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8B7E1C7D15A5F575829776 /* MotionManager.swift */; };
 		7DBD3EB3085F2381EE5B93DF /* Mission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DD6FB8C51A1A0F392388A07 /* Mission.swift */; };
 		93EBFD86AB9DB1EF23027897 /* AlarmEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0DD766E21DB3930563804F /* AlarmEditView.swift */; };
+		97012DFD098F697C7ADB35FB /* TopTabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71566A37EEA8E3A2296E7E1E /* TopTabBarView.swift */; };
 		9E0047F80D9ADA7DAB592B67 /* VisionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11ECE2DB316C619397E129B /* VisionManager.swift */; };
+		A75CDF360C49F836582EF629 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41FD99F5409D955B6116F382 /* SettingsView.swift */; };
 		B6846F75126DCB1725BBBF71 /* VoiceMissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38327EAB1560C7052E0B7410 /* VoiceMissionView.swift */; };
 		B7463D91DFAEFE7E95093941 /* MissionSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09BF1A6D434DF9DDB02EAF2 /* MissionSelectorView.swift */; };
 		BAD85CBBCEA5C698B30C4CB1 /* SoundPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F06099515F6FB76D157FD5D /* SoundPickerView.swift */; };
+		C0E55F676900FECBBFEE3753 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC4B5AD248B45120B44BCE4 /* HistoryView.swift */; };
 		C5C97B00B015DE71024FB4EA /* AlarmSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750622F4A2CD58409A664F12 /* AlarmSound.swift */; };
 		C7A28A8D4F7BE65269AB9B0C /* SquatsMissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 211B2A9FB6B08E2D1D675754 /* SquatsMissionView.swift */; };
 		D3FF7F99BBC0AA21E7FF343B /* WakeRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04125950A058E0C9A13FB3BC /* WakeRecord.swift */; };
 		D470A570C99A32F88732284D /* HardAlarmApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4366B2E0B3B5672964DDF252 /* HardAlarmApp.swift */; };
+		D75FF77AD984D9877F57C141 /* PuzzleCatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8250EA04D2404BBFD79CF17 /* PuzzleCatalogView.swift */; };
 		E2C1282FC3BE64A8FF327F82 /* StepsMissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A9F5A6D2654FA6D4251C7AC /* StepsMissionView.swift */; };
 		EAB62352A99150F15FEBDB63 /* MemoryMissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCB808F1CA39ED55536FD42 /* MemoryMissionView.swift */; };
+		F3127057761ED3094A9631A6 /* MemorySequence4x4View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9531E373607EC389E363F598 /* MemorySequence4x4View.swift */; };
 		F9D1128B444AA2A641332D24 /* NeonComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1E03E09A213D8429275DDE /* NeonComponents.swift */; };
 /* End PBXBuildFile section */
 
@@ -58,25 +67,34 @@
 		211B2A9FB6B08E2D1D675754 /* SquatsMissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SquatsMissionView.swift; sourceTree = "<group>"; };
 		34FD9ECA2898EACE77FE8D6B /* ShakeMissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeMissionView.swift; sourceTree = "<group>"; };
 		38327EAB1560C7052E0B7410 /* VoiceMissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceMissionView.swift; sourceTree = "<group>"; };
+		38FA4E5D61BE1591EC235BED /* ShakePhonePuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakePhonePuzzleView.swift; sourceTree = "<group>"; };
 		3DB1E17CBA2B13A56E6A7F86 /* PushupsMissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushupsMissionView.swift; sourceTree = "<group>"; };
+		41FD99F5409D955B6116F382 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		4366B2E0B3B5672964DDF252 /* HardAlarmApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardAlarmApp.swift; sourceTree = "<group>"; };
 		5A87371D433993FC8B8D9200 /* HardAlarmTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardAlarmTests.swift; sourceTree = "<group>"; };
 		644E7F7A6E6F1C15E8D4B205 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		65C43F67DD40B202FFE2742A /* AlarmListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmListView.swift; sourceTree = "<group>"; };
 		6F06099515F6FB76D157FD5D /* SoundPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPickerView.swift; sourceTree = "<group>"; };
+		71566A37EEA8E3A2296E7E1E /* TopTabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopTabBarView.swift; sourceTree = "<group>"; };
 		750622F4A2CD58409A664F12 /* AlarmSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmSound.swift; sourceTree = "<group>"; };
+		792A096A396B96CF58E09B34 /* WakeUpRingingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WakeUpRingingView.swift; sourceTree = "<group>"; };
 		7DD6FB8C51A1A0F392388A07 /* Mission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mission.swift; sourceTree = "<group>"; };
 		85D670335D0DE01D46C91A44 /* AlarmRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmRowView.swift; sourceTree = "<group>"; };
 		8EAF7BB34509A43AEECA752F /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		90E9126B76CA3E4B38DB5EF2 /* StatsHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsHeaderView.swift; sourceTree = "<group>"; };
+		9492E65DF1BCAF79A93A2603 /* MathMatchPuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathMatchPuzzleView.swift; sourceTree = "<group>"; };
+		9531E373607EC389E363F598 /* MemorySequence4x4View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemorySequence4x4View.swift; sourceTree = "<group>"; };
+		988629654248AD587BAE6443 /* Puzzle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Puzzle.swift; sourceTree = "<group>"; };
 		9A9F5A6D2654FA6D4251C7AC /* StepsMissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StepsMissionView.swift; sourceTree = "<group>"; };
 		9E1E8A9ABA8935C26309A128 /* AlarmRingingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmRingingView.swift; sourceTree = "<group>"; };
 		A2FFE2BA9031AFD432CB7E09 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
+		ADC4B5AD248B45120B44BCE4 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		B09BF1A6D434DF9DDB02EAF2 /* MissionSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionSelectorView.swift; sourceTree = "<group>"; };
 		C45D40B439BDD02B7FA9736A /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		CCCB808F1CA39ED55536FD42 /* MemoryMissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryMissionView.swift; sourceTree = "<group>"; };
 		D11ECE2DB316C619397E129B /* VisionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionManager.swift; sourceTree = "<group>"; };
 		D22D2E074AF3AC227426FBC0 /* MissionActiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionActiveView.swift; sourceTree = "<group>"; };
+		D8250EA04D2404BBFD79CF17 /* PuzzleCatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuzzleCatalogView.swift; sourceTree = "<group>"; };
 		E2C66CE2D6B0F47C1FC529AD /* PhotoHuntMissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoHuntMissionView.swift; sourceTree = "<group>"; };
 		E35682E75F1EB7167BE683B4 /* HardAlarm.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = HardAlarm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6500C167541D895EBC48EF2 /* HardAlarmTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = HardAlarmTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +119,7 @@
 				9E1E8A9ABA8935C26309A128 /* AlarmRingingView.swift */,
 				ED59ED483274E7E521446EEB /* AlarmSuccessView.swift */,
 				D22D2E074AF3AC227426FBC0 /* MissionActiveView.swift */,
+				792A096A396B96CF58E09B34 /* WakeUpRingingView.swift */,
 			);
 			path = Ringing;
 			sourceTree = "<group>";
@@ -120,8 +139,28 @@
 				65C43F67DD40B202FFE2742A /* AlarmListView.swift */,
 				85D670335D0DE01D46C91A44 /* AlarmRowView.swift */,
 				90E9126B76CA3E4B38DB5EF2 /* StatsHeaderView.swift */,
+				71566A37EEA8E3A2296E7E1E /* TopTabBarView.swift */,
 			);
 			path = Main;
+			sourceTree = "<group>";
+		};
+		52A1AF0EEA0F696CE48FBCBA /* History */ = {
+			isa = PBXGroup;
+			children = (
+				ADC4B5AD248B45120B44BCE4 /* HistoryView.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		5FAEF0E0E818C2F0BB509D13 /* Puzzles */ = {
+			isa = PBXGroup;
+			children = (
+				9492E65DF1BCAF79A93A2603 /* MathMatchPuzzleView.swift */,
+				9531E373607EC389E363F598 /* MemorySequence4x4View.swift */,
+				D8250EA04D2404BBFD79CF17 /* PuzzleCatalogView.swift */,
+				38FA4E5D61BE1591EC235BED /* ShakePhonePuzzleView.swift */,
+			);
+			path = Puzzles;
 			sourceTree = "<group>";
 		};
 		76D0B6605CFB19B02BA0C323 /* Models */ = {
@@ -130,6 +169,7 @@
 				ECA666BD990EE81ABEF135A6 /* Alarm.swift */,
 				750622F4A2CD58409A664F12 /* AlarmSound.swift */,
 				7DD6FB8C51A1A0F392388A07 /* Mission.swift */,
+				988629654248AD587BAE6443 /* Puzzle.swift */,
 				04125950A058E0C9A13FB3BC /* WakeRecord.swift */,
 			);
 			path = Models;
@@ -160,6 +200,14 @@
 			path = Editor;
 			sourceTree = "<group>";
 		};
+		93683E9971D01E4CE34984F6 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				41FD99F5409D955B6116F382 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		9562AD02BFC6D3C1BFF0C383 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -178,9 +226,12 @@
 			children = (
 				D7F5F26CD42BF7DE2AAE82ED /* Components */,
 				7FE2563923B5DC9EF8873A6C /* Editor */,
+				52A1AF0EEA0F696CE48FBCBA /* History */,
 				3B3E7D3EA9A49C42ADD20C9F /* Main */,
 				79551B8235D05E12A461AC19 /* Missions */,
+				5FAEF0E0E818C2F0BB509D13 /* Puzzles */,
 				14A0779975A23BD26F7C6FB5 /* Ringing */,
+				93683E9971D01E4CE34984F6 /* Settings */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -313,8 +364,11 @@
 				C5C97B00B015DE71024FB4EA /* AlarmSound.swift in Sources */,
 				40B10098C2BEF4CC9E553AE0 /* AlarmSuccessView.swift in Sources */,
 				D470A570C99A32F88732284D /* HardAlarmApp.swift in Sources */,
+				C0E55F676900FECBBFEE3753 /* HistoryView.swift in Sources */,
+				14401DADAA63DA67293A1D90 /* MathMatchPuzzleView.swift in Sources */,
 				555CEF7889835211143A4FF1 /* MathMissionView.swift in Sources */,
 				EAB62352A99150F15FEBDB63 /* MemoryMissionView.swift in Sources */,
+				F3127057761ED3094A9631A6 /* MemorySequence4x4View.swift in Sources */,
 				7DBD3EB3085F2381EE5B93DF /* Mission.swift in Sources */,
 				44EBDA94E1C519E999664605 /* MissionActiveView.swift in Sources */,
 				B7463D91DFAEFE7E95093941 /* MissionSelectorView.swift in Sources */,
@@ -323,7 +377,11 @@
 				38E275612BB473958DF7C9B5 /* NotificationManager.swift in Sources */,
 				520B362CC25F489B3805EDAE /* PhotoHuntMissionView.swift in Sources */,
 				20689385FCEDA0626B0AC6AA /* PushupsMissionView.swift in Sources */,
+				40C89D9CC66CE498BDAC5108 /* Puzzle.swift in Sources */,
+				D75FF77AD984D9877F57C141 /* PuzzleCatalogView.swift in Sources */,
+				A75CDF360C49F836582EF629 /* SettingsView.swift in Sources */,
 				06B943CE8712DE5AC7D33F24 /* ShakeMissionView.swift in Sources */,
+				5F18CFD6A8813E64129067CC /* ShakePhonePuzzleView.swift in Sources */,
 				38F0F2F43A39C8E3BDB3E310 /* SoundManager.swift in Sources */,
 				BAD85CBBCEA5C698B30C4CB1 /* SoundPickerView.swift in Sources */,
 				3A5F2403593F4A3CFE24873C /* SpeechManager.swift in Sources */,
@@ -331,9 +389,11 @@
 				4ACE1DA62CD65B5D5D3D4721 /* StatsHeaderView.swift in Sources */,
 				E2C1282FC3BE64A8FF327F82 /* StepsMissionView.swift in Sources */,
 				2E05CE27BCD66FE09F572E8F /* Theme.swift in Sources */,
+				97012DFD098F697C7ADB35FB /* TopTabBarView.swift in Sources */,
 				9E0047F80D9ADA7DAB592B67 /* VisionManager.swift in Sources */,
 				B6846F75126DCB1725BBBF71 /* VoiceMissionView.swift in Sources */,
 				D3FF7F99BBC0AA21E7FF343B /* WakeRecord.swift in Sources */,
+				25A8663DA285CB66DF0B29F7 /* WakeUpRingingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

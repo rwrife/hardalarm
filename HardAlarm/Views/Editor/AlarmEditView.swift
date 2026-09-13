@@ -44,21 +44,54 @@ struct AlarmEditView: View {
                         repeatDaysCard
                             .padding(.horizontal)
                         
-                        // Alarm Label
-                        NeonCard(accentColor: Theme.neonBlue) {
-                            HStack {
-                                Image(systemName: "tag.fill")
-                                    .foregroundColor(Theme.neonBlue)
-                                TextField("Alarm Label (e.g. Gym Rise & Grind)", text: $alarm.label)
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 16, weight: .semibold))
+                        // Alarm Label & Quick Presets
+                        NeonCard(accentColor: Theme.primaryOrange) {
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    Image(systemName: "tag.fill")
+                                        .foregroundColor(Theme.primaryOrange)
+                                    TextField("Label (e.g. Work, Gym)", text: $alarm.label)
+                                        .foregroundColor(.white)
+                                        .font(.system(size: 16, weight: .semibold))
+                                }
+                                
+                                HStack(spacing: 8) {
+                                    ForEach(["Work", "Gym", "Rise & Shine", "Study"], id: \.self) { preset in
+                                        Button(action: {
+                                            Haptics.light()
+                                            alarm.label = preset
+                                        }) {
+                                            Text(preset)
+                                                .font(.system(size: 12, weight: .semibold))
+                                                .foregroundColor(alarm.label == preset ? .black : Theme.textMuted)
+                                                .padding(.horizontal, 10)
+                                                .padding(.vertical, 5)
+                                                .background(
+                                                    Capsule()
+                                                        .fill(alarm.label == preset ? Theme.primaryOrange : Theme.cardInner)
+                                                )
+                                        }
+                                    }
+                                }
                             }
                         }
                         .padding(.horizontal)
                         
-                        // Wake-Up Mission Selector
-                        MissionSelectorView(mission: $alarm.mission)
-                            .padding(.horizontal)
+                        // Puzzles Required Card
+                        NeonCard(accentColor: Theme.primaryOrange) {
+                            HStack {
+                                Image(systemName: "puzzlepiece.fill")
+                                    .foregroundColor(Theme.primaryOrange)
+                                Text("Puzzles to Solve")
+                                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Stepper("\(alarm.puzzlesRequired)", value: $alarm.puzzlesRequired, in: 1...5)
+                                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                                    .foregroundColor(Theme.primaryOrange)
+                            }
+                        }
+                        .padding(.horizontal)
                         
                         // Sound & Volume Picker
                         SoundPickerView(

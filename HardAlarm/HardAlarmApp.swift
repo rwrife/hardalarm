@@ -13,9 +13,14 @@ struct HardAlarmApp: App {
                 .onAppear {
                     if CommandLine.arguments.contains("-testRinging") {
                         alarmManager.triggerAlarm(Alarm.sampleAlarms[0])
-                    } else if CommandLine.arguments.contains("-testMission") {
+                    } else if CommandLine.arguments.contains("-testPuzzle2") {
                         alarmManager.triggerAlarm(Alarm.sampleAlarms[0])
-                        alarmManager.startMission()
+                        alarmManager.currentPuzzleIndex = 2
+                        alarmManager.currentPuzzleType = .memorySequence
+                    } else if CommandLine.arguments.contains("-testPuzzle3") {
+                        alarmManager.triggerAlarm(Alarm.sampleAlarms[0])
+                        alarmManager.currentPuzzleIndex = 3
+                        alarmManager.currentPuzzleType = .shakePhone
                     }
                 }
         }
