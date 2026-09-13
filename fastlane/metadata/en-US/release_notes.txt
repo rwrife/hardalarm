@@ -1,0 +1,6 @@
+Initial release of HardAlarm:
+- 7 physical and cognitive wake-up challenges (Push-ups, Photo Hunt, Math Match, Memory Sequence, Squats, Vigorous Shake, Steps)
+- Deterministic Day-by-Day Random Challenge rotation
+- Custom high-intensity synthesized alarms and progressive volume controls
+- Obsidian dark mode theme with haptic audio visualizers
+- On-device privacy and wake streak tracking
