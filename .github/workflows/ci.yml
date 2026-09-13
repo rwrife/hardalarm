@@ -29,8 +29,11 @@ jobs:
       - name: Run unit tests
         run: |
           set -o pipefail
+          SIM_NAME=$(xcrun simctl list devices available | grep -E "iPhone [0-9]+" | head -1 | sed -E 's/^[[:space:]]*([^(]+)[[:space:]]*\(.*/\1/' | xargs)
+          [ -n "$SIM_NAME" ] || SIM_NAME="iPhone 16"
+          echo "Using simulator: $SIM_NAME"
           xcodebuild test \
             -project HardAlarm.xcodeproj \
             -scheme HardAlarm \
-            -destination "platform=iOS Simulator,OS=latest,name=iPhone 16" \
+            -destination "platform=iOS Simulator,name=$SIM_NAME" \
             CODE_SIGNING_ALLOWED=NO
