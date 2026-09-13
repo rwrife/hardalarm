@@ -114,12 +114,20 @@ struct AlarmListView: View {
         .onReceive(clockTimer) { input in
             currentTime = input
         }
+        .onAppear {
+            if CommandLine.arguments.contains("-testEditor") {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    isAddingAlarm = true
+                }
+            }
+        }
         .sheet(isPresented: $isAddingAlarm) {
             AlarmEditView(
                 alarm: Alarm(
                     time: Date().addingTimeInterval(3600),
                     label: "Work",
-                    puzzlesRequired: 3
+                    selectedPuzzle: .random,
+                    puzzlesRequired: 1
                 ),
                 isNew: true,
                 onSave: { newAlarm in

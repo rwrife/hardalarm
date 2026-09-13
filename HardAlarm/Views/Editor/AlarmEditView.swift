@@ -77,86 +77,76 @@ struct AlarmEditView: View {
                         }
                         .padding(.horizontal)
                         
-                        // Puzzles Required & Challenge Mode Card
+                        // Wake-Up Challenge Picker Card (Only need to select one)
                         NeonCard(accentColor: Theme.primaryOrange) {
                             VStack(alignment: .leading, spacing: 14) {
                                 HStack {
                                     Image(systemName: "puzzlepiece.fill")
                                         .foregroundColor(Theme.primaryOrange)
-                                    Text("Puzzles to Solve")
+                                    Text("Wake-Up Puzzle")
                                         .font(.system(size: 16, weight: .bold, design: .rounded))
                                         .foregroundColor(.white)
                                     Spacer()
-                                    Stepper("\(alarm.puzzlesRequired)", value: $alarm.puzzlesRequired, in: 1...5)
-                                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                                    Text("Select 1 to Solve")
+                                        .font(.system(size: 12, weight: .semibold))
                                         .foregroundColor(Theme.primaryOrange)
                                 }
                                 
+                                Text("Solve this puzzle to turn off the alarm in the morning")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(Theme.textMuted)
+                                
                                 Divider().background(Theme.cardBorder)
                                 
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("CHALLENGE SELECTION")
-                                        .font(.system(size: 11, weight: .bold, design: .monospaced))
-                                        .foregroundColor(Theme.textMuted)
-                                    
-                                    HStack(spacing: 10) {
+                                // 4 Selectable Puzzle Options
+                                VStack(spacing: 8) {
+                                    ForEach(AlarmPuzzleChoice.allCases) { choice in
+                                        let isSelected = alarm.selectedPuzzle == choice
                                         Button(action: {
                                             Haptics.light()
-                                            alarm.challengeMode = .random
+                                            alarm.selectedPuzzle = choice
+                                            alarm.puzzlesRequired = 1
                                         }) {
-                                            HStack(spacing: 8) {
-                                                Image(systemName: "dice.fill")
-                                                    .foregroundColor(alarm.challengeMode == .random ? .black : Theme.primaryOrange)
+                                            HStack(spacing: 12) {
+                                                ZStack {
+                                                    Circle()
+                                                        .fill(isSelected ? Theme.primaryOrange : Theme.cardInner)
+                                                        .frame(width: 38, height: 38)
+                                                    Image(systemName: choice.icon)
+                                                        .font(.system(size: 16, weight: .bold))
+                                                        .foregroundColor(isSelected ? .black : Theme.primaryOrange)
+                                                }
                                                 
                                                 VStack(alignment: .leading, spacing: 2) {
-                                                    Text("Random Mix")
-                                                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                                                        .foregroundColor(alarm.challengeMode == .random ? .black : .white)
-                                                    Text("Shuffles every morning")
-                                                        .font(.system(size: 10, weight: .medium))
-                                                        .foregroundColor(alarm.challengeMode == .random ? .black.opacity(0.8) : Theme.textMuted)
+                                                    Text(choice.displayName)
+                                                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                                                        .foregroundColor(isSelected ? .white : .white.opacity(0.85))
+                                                    
+                                                    Text(choice.subtitle)
+                                                        .font(.system(size: 11, weight: .medium))
+                                                        .foregroundColor(isSelected ? Theme.primaryOrange : Theme.textMuted)
                                                 }
-                                            }
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 10)
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 12)
-                                                    .fill(alarm.challengeMode == .random ? Theme.primaryOrange : Theme.cardInner)
-                                                    .overlay(
-                                                        RoundedRectangle(cornerRadius: 12)
-                                                            .stroke(alarm.challengeMode == .random ? Theme.primaryOrange : Theme.cardBorder, lineWidth: 1)
-                                                    )
-                                            )
-                                        }
-                                        .buttonStyle(.plain)
-                                        
-                                        Button(action: {
-                                            Haptics.light()
-                                            alarm.challengeMode = .sequential
-                                        }) {
-                                            HStack(spacing: 8) {
-                                                Image(systemName: "list.number")
-                                                    .foregroundColor(alarm.challengeMode == .sequential ? .black : Theme.primaryOrange)
                                                 
-                                                VStack(alignment: .leading, spacing: 2) {
-                                                    Text("Fixed Order")
-                                                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                                                        .foregroundColor(alarm.challengeMode == .sequential ? .black : .white)
-                                                    Text("Math → Memory → Shake")
-                                                        .font(.system(size: 10, weight: .medium))
-                                                        .foregroundColor(alarm.challengeMode == .sequential ? .black.opacity(0.8) : Theme.textMuted)
+                                                Spacer()
+                                                
+                                                if isSelected {
+                                                    Image(systemName: "checkmark.circle.fill")
+                                                        .font(.system(size: 20))
+                                                        .foregroundColor(Theme.primaryOrange)
+                                                } else {
+                                                    Circle()
+                                                        .stroke(Theme.cardBorder, lineWidth: 1.5)
+                                                        .frame(width: 20, height: 20)
                                                 }
                                             }
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                            .padding(.horizontal, 12)
+                                            .padding(.horizontal, 14)
                                             .padding(.vertical, 10)
                                             .background(
-                                                RoundedRectangle(cornerRadius: 12)
-                                                    .fill(alarm.challengeMode == .sequential ? Theme.primaryOrange : Theme.cardInner)
+                                                RoundedRectangle(cornerRadius: 14)
+                                                    .fill(isSelected ? Color(red: 0.16, green: 0.18, blue: 0.28) : Theme.cardInner)
                                                     .overlay(
-                                                        RoundedRectangle(cornerRadius: 12)
-                                                            .stroke(alarm.challengeMode == .sequential ? Theme.primaryOrange : Theme.cardBorder, lineWidth: 1)
+                                                        RoundedRectangle(cornerRadius: 14)
+                                                            .stroke(isSelected ? Theme.primaryOrange : Theme.cardBorder, lineWidth: 1)
                                                     )
                                             )
                                         }

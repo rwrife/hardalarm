@@ -45,7 +45,23 @@ struct WakeUpRingingView: View {
                 // Card Container
                 if alarmManager.currentPuzzleIndex == 1 {
                     // Screen 2: Golden Glowing Border & Sparkles Box
-                    ZStack {
+                    VStack(spacing: 12) {
+                        Text(alarmManager.totalPuzzlesRequired == 1 ? "Solve Puzzle to Stop Alarm" : "Solve \(alarmManager.totalPuzzlesRequired) Puzzles to Stop Alarm")
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                            .padding(.top, 16)
+                        
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 18)
+                                .fill(Color(red: 0.11, green: 0.12, blue: 0.19))
+                            
+                            puzzleView(for: alarmManager.currentPuzzleType)
+                                .padding(.vertical, 8)
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.bottom, 16)
+                    }
+                    .background(
                         RoundedRectangle(cornerRadius: 24)
                             .fill(Theme.cardBackground)
                             .overlay(
@@ -59,28 +75,10 @@ struct WakeUpRingingView: View {
                                         lineWidth: 2
                                     )
                             )
-                            .shadow(color: Theme.glowingGold.opacity(0.4), radius: 20, x: 0, y: 4)
-                        
-                        sparklesOverlay
-                        
-                        VStack(spacing: 12) {
-                            Text("Solve \(alarmManager.totalPuzzlesRequired) Puzzles to Stop Alarm")
-                                .font(.system(size: 15, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
-                                .padding(.top, 14)
-                            
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 18)
-                                    .fill(Color(red: 0.11, green: 0.12, blue: 0.19))
-                                
-                                puzzleView(for: alarmManager.currentPuzzleType)
-                            }
-                            .padding(.horizontal, 14)
-                            .padding(.bottom, 14)
-                        }
-                    }
+                            .shadow(color: Theme.glowingGold.opacity(0.35), radius: 18, x: 0, y: 4)
+                    )
+                    .overlay(sparklesOverlay)
                     .padding(.horizontal, 24)
-                    .frame(height: 380)
                     
                     // Screen 2 Progress Bar
                     VStack(spacing: 6) {
@@ -92,13 +90,13 @@ struct WakeUpRingingView: View {
                                 
                                 Capsule()
                                     .fill(Theme.primaryOrange)
-                                    .frame(width: max(24, geo.size.width * 0.33), height: 8)
+                                    .frame(width: max(24, geo.size.width * 0.5), height: 8)
                             }
                         }
                         .frame(height: 8)
                         .padding(.horizontal, 28)
                         
-                        Text("1 of \(alarmManager.totalPuzzlesRequired) Puzzles Solved")
+                        Text(alarmManager.totalPuzzlesRequired == 1 ? "Solve 1 Puzzle to Dismiss Alarm" : "1 of \(alarmManager.totalPuzzlesRequired) Puzzles Solved")
                             .font(.system(size: 13, weight: .semibold, design: .rounded))
                             .foregroundColor(Theme.textMuted)
                     }

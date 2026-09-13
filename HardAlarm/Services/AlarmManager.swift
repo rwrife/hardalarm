@@ -160,29 +160,12 @@ final class AlarmManager: ObservableObject {
         ringingAlarm = alarm
         isRinging = true
         currentPuzzleIndex = 1
-        totalPuzzlesRequired = max(1, alarm.puzzlesRequired)
+        totalPuzzlesRequired = 1
         
-        // Build puzzle sequence based on challengeMode
-        var sequence: [PuzzleType] = []
-        let pool: [PuzzleType] = [.mathMatch, .memorySequence, .shakePhone]
-        
-        if alarm.challengeMode == .random {
-            var lastType: PuzzleType? = nil
-            for _ in 0..<totalPuzzlesRequired {
-                let candidates = pool.filter { $0 != lastType }
-                let chosen = candidates.randomElement() ?? pool.randomElement()!
-                sequence.append(chosen)
-                lastType = chosen
-            }
-        } else {
-            let fixed: [PuzzleType] = [.mathMatch, .memorySequence, .shakePhone]
-            for i in 0..<totalPuzzlesRequired {
-                sequence.append(fixed[i % fixed.count])
-            }
-        }
-        
-        activePuzzleSequence = sequence
-        currentPuzzleType = sequence.first ?? .mathMatch
+        // Resolve selected puzzle (for .random, evaluates day-by-day deterministic choice)
+        let resolved = alarm.selectedPuzzle.resolvePuzzleType(for: Date())
+        activePuzzleSequence = [resolved]
+        currentPuzzleType = resolved
         isAlarmSoundActive = true
         isCelebrationPresented = false
         wakeStartTime = Date()

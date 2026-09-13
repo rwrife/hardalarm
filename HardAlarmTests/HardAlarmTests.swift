@@ -83,4 +83,72 @@ final class HardAlarmTests: XCTestCase {
             XCTAssertFalse(target.destinationHint.isEmpty, "Target \(target) must have a hint")
         }
     }
+    
+    func testPuzzleChoiceDirectResolution() {
+        XCTAssertEqual(AlarmPuzzleChoice.mathMatch.resolvePuzzleType(), .mathMatch)
+        XCTAssertEqual(AlarmPuzzleChoice.memorySequence.resolvePuzzleType(), .memorySequence)
+        XCTAssertEqual(AlarmPuzzleChoice.shakePhone.resolvePuzzleType(), .shakePhone)
+    }
+    
+    func testPuzzleChoiceRandomChangesDayByDay() {
+        let calendar = Calendar.current
+        var baseComponents = DateComponents()
+        baseComponents.year = 2026
+        baseComponents.month = 9
+        baseComponents.day = 12
+        baseComponents.hour = 7
+        
+        guard let day1 = calendar.date(from: baseComponents),
+              let day2 = calendar.date(byAdding: .day, value: 1, to: day1),
+              let day3 = calendar.date(byAdding: .day, value: 2, to: day1),
+              let day4 = calendar.date(byAdding: .day, value: 3, to: day1),
+              let day5 = calendar.date(byAdding: .day, value: 4, to: day1) else {
+            XCTFail("Failed to construct dates")
+            return
+        }
+        
+        let puzzle1 = AlarmPuzzleChoice.random.resolvePuzzleType(for: day1)
+        let puzzle2 = AlarmPuzzleChoice.random.resolvePuzzleType(for: day2)
+        let puzzle3 = AlarmPuzzleChoice.random.resolvePuzzleType(for: day3)
+        let puzzle4 = AlarmPuzzleChoice.random.resolvePuzzleType(for: day4)
+        let puzzle5 = AlarmPuzzleChoice.random.resolvePuzzleType(for: day5)
+        
+        // Ensure that the puzzle resolved is one of the valid playable types
+        let validPool: [PuzzleType] = [.mathMatch, .memorySequence, .shakePhone]
+        XCTAssertTrue(validPool.contains(puzzle1))
+        XCTAssertTrue(validPool.contains(puzzle2))
+        XCTAssertTrue(validPool.contains(puzzle3))
+        
+        // Ensure day-by-day stability (same day returns same puzzle)
+        let puzzle1Again = AlarmPuzzleChoice.random.resolvePuzzleType(for: day1)
+        XCTAssertEqual(puzzle1, puzzle1Again, "The same calendar date should deterministically resolve to the same puzzle")
+        
+        // Across multiple sequential days, ensure there is variety (not just stuck on 1 puzzle)
+        let sequence = [puzzle1, puzzle2, puzzle3, puzzle4, puzzle5]
+        let uniqueCount = Set(sequence).count
+        XCTAssertGreaterThan(uniqueCount, 1, "Random puzzle selection should vary across days")
+    }
+    
+    func testAlarmSinglePuzzleDefaultAndDecoding() throws {
+        let alarm = Alarm(time: Date(), label: "Single Puzzle Test")
+        XCTAssertEqual(alarm.puzzlesRequired, 1)
+        XCTAssertEqual(alarm.selectedPuzzle, .random)
+        
+        // Test decoding legacy JSON without selectedPuzzle
+        let legacyJSON = """
+        {
+            "id": "12345678-1234-1234-1234-1234567890AB",
+            "time": 0,
+            "label": "Old Alarm",
+            "isEnabled": true,
+            "repeatDays": [2, 3]
+        }
+        """.data(using: .utf8)!
+        
+        let decoder = JSONDecoder()
+        let decoded = try decoder.decode(Alarm.self, from: legacyJSON)
+        XCTAssertEqual(decoded.selectedPuzzle, .random)
+        XCTAssertEqual(decoded.puzzlesRequired, 1)
+        XCTAssertEqual(decoded.label, "Old Alarm")
+    }
 }

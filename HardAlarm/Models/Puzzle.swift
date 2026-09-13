@@ -1,22 +1,57 @@
 import SwiftUI
 
-enum ChallengeSelectionMode: String, CaseIterable, Codable, Identifiable {
+enum AlarmPuzzleChoice: String, CaseIterable, Codable, Identifiable {
     case random = "Random"
-    case sequential = "Fixed"
+    case mathMatch = "Math Match"
+    case memorySequence = "Memory Sequence"
+    case shakePhone = "Vigorous Shake"
     
     var id: String { rawValue }
     
     var icon: String {
         switch self {
         case .random: return "dice.fill"
-        case .sequential: return "list.number"
+        case .mathMatch: return "function"
+        case .memorySequence: return "square.grid.3x3.topleft.filled"
+        case .shakePhone: return "iphone.radiowaves.left.and.right"
         }
     }
     
-    var description: String {
+    var displayName: String {
         switch self {
-        case .random: return "Surprise mix of challenges every morning"
-        case .sequential: return "Math Match → Memory → Shake"
+        case .random: return "Random (Day by Day)"
+        case .mathMatch: return "Math Match"
+        case .memorySequence: return "Memory Sequence"
+        case .shakePhone: return "Vigorous Shake"
+        }
+    }
+    
+    var subtitle: String {
+        switch self {
+        case .random: return "Randomly changes puzzle day by day"
+        case .mathMatch: return "Missing number arithmetic"
+        case .memorySequence: return "4x4 color recall pattern"
+        case .shakePhone: return "Physical kinetic shake challenge"
+        }
+    }
+    
+    // Deterministically resolve puzzle type day by day
+    func resolvePuzzleType(for date: Date = Date()) -> PuzzleType {
+        switch self {
+        case .mathMatch:
+            return .mathMatch
+        case .memorySequence:
+            return .memorySequence
+        case .shakePhone:
+            return .shakePhone
+        case .random:
+            let calendar = Calendar.current
+            let dayOfYear = calendar.ordinality(of: .day, in: .year, for: date) ?? calendar.component(.day, from: date)
+            let year = calendar.component(.year, from: date)
+            let available: [PuzzleType] = [.mathMatch, .memorySequence, .shakePhone]
+            let seed = (dayOfYear * 73856093) ^ (year * 19349663)
+            let index = abs(seed) % available.count
+            return available[index]
         }
     }
 }
