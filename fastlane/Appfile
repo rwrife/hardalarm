@@ -1,0 +1,6 @@
+# Fastlane configuration for HardAlarm.
+app_identifier("com.infinityball.hardalarm")
+
+# Authentication is handled by `app_store_connect_api_key` in the Fastfile using the
+# ASC_KEY_ID / ASC_ISSUER_ID / ASC_KEY_P8 repository secrets, so no Apple ID,
+# team_id, or itc_team_id is configured here.

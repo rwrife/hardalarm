@@ -4,3 +4,19 @@ DerivedData/
 xcuserdata/
 .build/
 *.xcuserstate
+
+# Build outputs
+build/
+*.ipa
+*.dSYM.zip
+
+# Secrets and local signing keys
+*.p8
+*.p12
+*.mobileprovision
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/test_output/
+fastlane/README.md

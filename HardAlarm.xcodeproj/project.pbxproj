@@ -427,6 +427,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2ES87W257J;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -434,6 +436,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hardalarm.tests;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;
@@ -565,9 +568,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2ES87W257J;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = HardAlarm;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "HardAlarm requires camera access to detect household objects like coffee mugs to dismiss wake-up missions.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "HardAlarm uses your microphone to verify morning affirmations.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "HardAlarm uses motion sensors to detect push-ups, squats, and shakes.";
@@ -581,6 +587,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.infinityball.hardalarm;
 				PRODUCT_NAME = HardAlarm;
 				SDKROOT = iphoneos;
@@ -594,8 +601,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2ES87W257J;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = HardAlarm;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSCameraUsageDescription = "HardAlarm requires camera access to detect household objects like coffee mugs to dismiss wake-up missions.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "HardAlarm uses your microphone to verify morning affirmations.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "HardAlarm uses motion sensors to detect push-ups, squats, and shakes.";
@@ -609,6 +620,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.infinityball.hardalarm;
 				PRODUCT_NAME = HardAlarm;
 				SDKROOT = iphoneos;
@@ -621,6 +633,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2ES87W257J;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -628,6 +642,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hardalarm.tests;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 6.0;

@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build & Test
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          echo "Available Xcode installations:"
+          ls -d /Applications/Xcode*.app
+          latest="$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -1)"
+          [ -n "$latest" ] || latest=/Applications/Xcode.app
+          sudo xcode-select --switch "$latest/Contents/Developer"
+          xcodebuild -version
+
+      - name: Run unit tests
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project HardAlarm.xcodeproj \
+            -scheme HardAlarm \
+            -destination "platform=iOS Simulator,OS=latest,name=iPhone 16" \
+            CODE_SIGNING_ALLOWED=NO
