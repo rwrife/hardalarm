@@ -85,7 +85,7 @@ platform :ios do
          "-archivePath \"#{archive}\" " \
          "CURRENT_PROJECT_VERSION=#{build_number} " \
          "MARKETING_VERSION=#{build_name} " \
-         "#{xcodebuild_auth_flags} archive")
+         "CODE_SIGNING_ALLOWED=NO archive")
 
       FileUtils.rm_rf(ipa_output_dir)
       FileUtils.mkdir_p(ipa_output_dir)
