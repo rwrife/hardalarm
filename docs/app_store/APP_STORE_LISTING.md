@@ -72,8 +72,9 @@ Transform your wake-up routine from a daily struggle into an energized morning v
 
 ## 🖼️ Screenshot Showcase & File Assets
 
-Screenshots are available in two native iOS display resolutions:
+Screenshots are available in three native iOS display resolutions:
 - **6.9-inch Display (iPhone 16 Pro Max / 17 Pro Max):** `1320 x 2868` pixels (`docs/app_store/screenshots/6.9_inch/`)
+- **6.5-inch Display (iPhone 11 Pro Max / XS Max / 14 Plus):** `1242 x 2688` pixels (`docs/app_store/screenshots/6.5_inch/`) *(also available in `1284 x 2778` px)*
 - **6.3-inch Display (iPhone 16 Pro / 17 Pro):** `1206 x 2622` pixels (`docs/app_store/screenshots/6.3_inch/`)
 
 | File Name | Screen | Recommended Caption / Headline |

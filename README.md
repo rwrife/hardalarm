@@ -175,7 +175,7 @@ hardalarm/
 │   └── app_store/
 │       ├── APP_STORE_LISTING.md   # App Store copy, keywords, & submission guide
 │       ├── PRIVACY_POLICY.md      # Full privacy policy
-│       └── screenshots/           # Store screenshots (6.9", 6.3", and raw assets)
+│       └── screenshots/           # Store screenshots (6.9", 6.5", 6.3", and raw assets)
 ├── fastlane/
 │   ├── Appfile                    # App bundle ID & Team configuration
 │   ├── Fastfile                   # Fastlane automation lanes (beta, release)
