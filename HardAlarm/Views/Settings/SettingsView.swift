@@ -8,6 +8,8 @@ struct SettingsView: View {
     @State private var defaultVolume: Double = 1.0
     @State private var vibrateEnabled: Bool = true
     @State private var selectedMelody: AlarmSound = .nuclear
+    @State private var bedtimeSound: BedtimeSound = .rain
+    @State private var bedtimeMinutes: Int = 0
     @State private var testCountdown: Int? = nil
     @State private var testTimer: Timer?
     
@@ -25,6 +27,8 @@ struct SettingsView: View {
                 }
                 .padding(.top, 10)
                 
+                bedtimeCard
+
                 // Background Audio & Mute Bypass Section
                 backgroundAudioCard
                 
@@ -119,6 +123,48 @@ struct SettingsView: View {
         }
     }
     
+    private var bedtimeCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("BEDTIME SOUNDS")
+                .font(.system(size: 13, weight: .bold, design: .monospaced))
+                .foregroundColor(Theme.neonGreen)
+            Text("Offline ambient sound. Stops when an alarm rings; no music subscription or network needed.")
+                .font(.system(size: 13))
+                .foregroundColor(.white)
+            Picker("Ambient sound", selection: $bedtimeSound) {
+                ForEach(BedtimeSound.allCases) { sound in Text(sound.rawValue).tag(sound) }
+            }
+            .accessibilityIdentifier("bedtime.sound")
+            Picker("Sleep timer", selection: $bedtimeMinutes) {
+                Text("Until stopped").tag(0)
+                Text("15 minutes").tag(15)
+                Text("30 minutes").tag(30)
+                Text("60 minutes").tag(60)
+                Text("120 minutes").tag(120)
+            }
+            .accessibilityIdentifier("bedtime.timer")
+            if let active = soundManager.activeBedtimeSound {
+                Text("Playing \(active.rawValue)" + (soundManager.bedtimeEndsAt.map { " until \($0.formatted(date: .omitted, time: .shortened))" } ?? ""))
+                    .foregroundColor(.white)
+            }
+            if let error = soundManager.bedtimeError {
+                Text(error).foregroundColor(Theme.primaryOrange)
+            }
+            Button(soundManager.activeBedtimeSound == nil ? "Play bedtime sound" : "Stop bedtime sound") {
+                if soundManager.activeBedtimeSound == nil {
+                    soundManager.playBedtime(bedtimeSound, minutes: bedtimeMinutes == 0 ? nil : bedtimeMinutes)
+                } else {
+                    soundManager.stopBedtime()
+                }
+            }
+            .accessibilityIdentifier("bedtime.playback")
+            .buttonStyle(.borderedProminent)
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 16).fill(Theme.cardBackground))
+    }
+
     // MARK: - Background Audio & Mute Bypass Card
     
     private var backgroundAudioCard: some View {

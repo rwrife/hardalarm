@@ -134,6 +134,42 @@ final class HardAlarmTests: XCTestCase {
         let uniqueCount = Set(sequence).count
         XCTAssertGreaterThan(uniqueCount, 1, "Random challenge selection should vary across days")
     }
+
+    func testBedtimeWavGeneration() {
+        for sound in BedtimeSound.allCases {
+            let data = SoundManager.generateBedtimeWavData(for: sound)
+            XCTAssertGreaterThan(data.count, 44, "Generated bedtime audio data should include WAV header and samples")
+        }
+    }
+
+    @MainActor
+    func testBedtimeTimerRangeValidation() {
+        let soundManager = SoundManager.shared
+        soundManager.playBedtime(.rain, minutes: 0)
+        XCTAssertNotNil(soundManager.bedtimeError, "Zero minutes should be rejected as invalid timer")
+        XCTAssertNil(soundManager.activeBedtimeSound)
+
+        soundManager.playBedtime(.rain, minutes: 500)
+        XCTAssertNotNil(soundManager.bedtimeError, "Minutes over 480 should be rejected")
+        XCTAssertNil(soundManager.activeBedtimeSound)
+
+        soundManager.playBedtime(.rain, minutes: nil)
+        XCTAssertNil(soundManager.bedtimeError)
+        XCTAssertEqual(soundManager.activeBedtimeSound, .rain)
+        XCTAssertNil(soundManager.bedtimeEndsAt)
+        soundManager.stopBedtime()
+        XCTAssertNil(soundManager.activeBedtimeSound)
+    }
+    @MainActor
+    func testAlarmPlaybackStopsBedtime() {
+        let soundManager = SoundManager.shared
+        soundManager.playBedtime(.ocean, minutes: 15)
+        XCTAssertEqual(soundManager.activeBedtimeSound, .ocean)
+        soundManager.playAlarm(sound: .nuclear, volume: 0.5, progressive: false)
+        XCTAssertNil(soundManager.activeBedtimeSound, "Triggering alarm should stop bedtime noise immediately")
+        XCTAssertNil(soundManager.bedtimeEndsAt)
+        soundManager.stopAlarm()
+    }
     
     func testAlarmSinglePuzzleDefaultAndDecoding() throws {
         let alarm = Alarm(time: Date(), label: "Single Challenge Test")
