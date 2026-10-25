@@ -1,6 +1,15 @@
 import Foundation
 import AVFoundation
 
+// Bedtime sounds are app-owned, generated offline. Timer is a sleep timer, not a scheduled alarm.
+enum BedtimeSound: String, CaseIterable, Identifiable, Sendable {
+    case rain = "Rain"
+    case ocean = "Ocean"
+    case fan = "Fan"
+
+    var id: String { rawValue }
+}
+
 @MainActor
 final class SoundManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     static let shared = SoundManager()
@@ -8,6 +17,8 @@ final class SoundManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     private var audioPlayer: AVAudioPlayer?
     private var previewPlayer: AVAudioPlayer?
     private var silentAudioPlayer: AVAudioPlayer?
+    private var bedtimePlayer: AVAudioPlayer?
+    private var bedtimeTimer: Timer?
     private var volumeTimer: Timer?
     private var isProgressive: Bool = false
     private var targetVolume: Float = 1.0
@@ -17,7 +28,10 @@ final class SoundManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var isPreviewing: Bool = false
     @Published var isSilentKeepAliveActive: Bool = false
     @Published var activePreviewSound: AlarmSound?
-    
+    @Published private(set) var activeBedtimeSound: BedtimeSound?
+    @Published private(set) var bedtimeEndsAt: Date?
+    @Published private(set) var bedtimeError: String?
+
     override init() {
         super.init()
         configureAudioSession()
@@ -68,9 +82,73 @@ final class SoundManager: NSObject, ObservableObject, AVAudioPlayerDelegate {
         print("Background audio keep-alive stopped")
     }
     
+    // MARK: - Bedtime playback
+
+    func playBedtime(_ sound: BedtimeSound, minutes: Int?) {
+        if let minutes, !(1...480).contains(minutes) {
+            bedtimeError = "Choose a timer between 1 and 480 minutes."
+            return
+        }
+        stopBedtime()
+        bedtimeError = nil
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+            let player = try AVAudioPlayer(data: Self.generateBedtimeWavData(for: sound))
+            player.numberOfLoops = -1
+            player.volume = 0.35
+            guard player.play() else { throw NSError(domain: "HardAlarm.Bedtime", code: 1) }
+            bedtimePlayer = player
+            activeBedtimeSound = sound
+            if let minutes {
+                bedtimeEndsAt = Date().addingTimeInterval(TimeInterval(minutes * 60))
+                bedtimeTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(minutes * 60), repeats: false) { [weak self] _ in
+                    Task { @MainActor in self?.stopBedtime() }
+                }
+            }
+        } catch {
+            stopBedtime()
+            bedtimeError = "Could not start bedtime sound: \(error.localizedDescription)"
+        }
+    }
+
+    func stopBedtime() {
+        bedtimeTimer?.invalidate()
+        bedtimeTimer = nil
+        bedtimePlayer?.stop()
+        bedtimePlayer = nil
+        activeBedtimeSound = nil
+        bedtimeEndsAt = nil
+    }
+
+    // No network, files, or samples required. Fixed-seed filtered noise repeats at a smooth 4-second boundary.
+    nonisolated static func generateBedtimeWavData(for sound: BedtimeSound) -> Data {
+        let rate = 22_050
+        let count = rate * 4
+        var state: UInt32 = 0x6d2b79f5
+        var filtered = 0.0
+        var samples = [Int16](repeating: 0, count: count)
+        for i in 0..<count {
+            state = state &* 1_664_525 &+ 1_013_904_223
+            let noise = Double(state >> 8) / Double(0x00ff_ffff) * 2 - 1
+            filtered += (noise - filtered) * 0.015
+            let t = Double(i) / Double(rate)
+            let level: Double
+            switch sound {
+            case .rain: level = (noise * 0.22 + filtered * 0.3)
+            case .ocean: level = filtered * (0.45 + 0.45 * sin(2 * .pi * t / 4)) * 2
+            case .fan: level = filtered * 0.9 + 0.04 * sin(2 * .pi * 110 * t)
+            }
+            let edge = min(1.0, Double(min(i, count - 1 - i)) / 440.0)
+            samples[i] = Int16(max(-1.0, min(1.0, level * edge)) * 32767)
+        }
+        return createWavHeaderAndData(samples: samples, sampleRate: rate)
+    }
+
     // MARK: - Alarm Playback
     
     func playAlarm(sound: AlarmSound, volume: Float = 1.0, progressive: Bool = true) {
+        stopBedtime()
         stopSilentKeepAlive()
         stopPreview()
         stopAlarm()
